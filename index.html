@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Arrangementsportal · URC</title>
+<meta name="description" content="Felles planleggingsverktøy for URC, arrangørklubber og partnere i Løpernes Mester.">
+<meta name="theme-color" content="#0b1626">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/portal.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/portal.js"></script>
+<style>
+.hero{position:relative;min-height:min(86vh,760px);display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:35% 40%;filter:saturate(.75) contrast(1.05)}
+.hero::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(11,22,38,.96) 0%,rgba(11,22,38,.82) 38%,rgba(11,22,38,.35) 70%,rgba(11,22,38,.15) 100%),
+  linear-gradient(0deg,rgba(11,22,38,1) 0%,rgba(11,22,38,0) 40%)}
+.hero .container{position:relative;z-index:1;padding-top:96px;padding-bottom:64px}
+.hero h1{max-width:12ch;margin:14px 0 20px}
+.hero .lede{max-width:52ch;font-size:clamp(17px,1.6vw,19px);color:#c9d6e3}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.inforow{display:flex;align-items:center;gap:10px;position:relative}
+.ibtn{appearance:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-2);background:transparent;color:var(--sage);font:italic 700 13px/1 Georgia,serif;cursor:pointer;display:grid;place-items:center;padding:0}
+.ibtn:hover,.ibtn[aria-expanded=true]{border-color:var(--sage);background:#13283f}
+.ipop{position:absolute;z-index:5;top:30px;left:0;width:min(420px,calc(100vw - 32px));box-shadow:0 12px 30px rgba(0,0,0,.45);padding:14px 16px;background:var(--panel);border:1px solid var(--line-2);border-radius:10px;display:flex;flex-direction:column;gap:6px;max-width:420px;font-size:14.5px;color:var(--muted)}
+.ipop[hidden]{display:none}
+.ipop b{color:var(--fg)}
+@media (max-width:720px){.hero::after{background:linear-gradient(0deg,rgba(11,22,38,1) 10%,rgba(11,22,38,.78) 60%,rgba(11,22,38,.45) 100%)}.hero img{object-position:30% 30%}}
+
+section.block{padding:88px 0 0}
+.shead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 40px;margin-bottom:32px}
+.shead h2{margin-top:10px;max-width:18ch}
+.shead p{max-width:46ch;color:var(--muted)}
+
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.tools{grid-template-columns:1fr}}
+.tool{position:relative;padding:26px 24px 24px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.tool .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tool .n{font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.tool h3{font-size:26px;margin-top:4px;overflow-wrap:anywhere}
+.tool .lede{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
+.tool p{color:var(--muted);font-size:15px}
+.tool.soon{background:linear-gradient(180deg,#0f2035,#0c1a2c)}
+.tool.soon .ticon{color:var(--gold)}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
+@media (max-width:900px){.steps{grid-template-columns:1fr}}
+.step{padding:26px 28px 6px 0}
+.step+.step{padding-left:28px;border-left:1px solid var(--line)}
+@media (max-width:900px){.step+.step{padding-left:0;border-left:0;border-top:1px solid var(--line)}}
+.step .k{font-family:var(--f-display);font-weight:700;font-size:44px;color:var(--line-2);line-height:1}
+.step h3{margin:14px 0 8px;font-size:21px}
+.step p{color:var(--muted);font-size:15px}
+
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.roles{grid-template-columns:1fr}}
+.role{padding:22px 22px 18px}
+.role h3{font-size:20px;margin:12px 0 4px}
+.role .who{color:var(--muted);font-size:14px;margin-bottom:14px}
+.role ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+.role li{display:flex;gap:10px;align-items:baseline}
+.role li::before{content:"";flex:none;width:12px;height:2px;background:var(--sage);transform:translateY(-4px)}
+.role li.no{color:var(--dim)}
+.role li.no::before{background:var(--line-2)}
+
+.story{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;overflow:hidden}
+@media (max-width:900px){.story{grid-template-columns:1fr}}
+.story img{width:100%;height:100%;min-height:320px;object-fit:cover}
+.story .txt{padding:clamp(24px,4vw,48px);display:flex;flex-direction:column;justify-content:center;gap:16px}
+.story .txt p{color:var(--muted)}
+
+.final{text-align:center;padding:72px 0 0}
+.final h2{max-width:20ch;margin:10px auto 14px}
+.final p{color:var(--muted);max-width:52ch;margin:0 auto}
+.final .cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="container">
+    <a class="brand" href="./" id="brand"><span id="logo"></span><i></i><span>Arrangementsportal</span></a>
+    <span class="sp"></span>
+    <a class="btn sm primary" id="topCta" href="logg-inn">Logg inn</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <img src="assets/img/hero.jpg" alt="Løpere på startstreken i Løpernes Mester, Granåsen 2026" fetchpriority="high">
+    <div class="container">
+      <div class="eyebrow">Løpernes Mester · For arrangører og partnere</div>
+      <h1>Planlegg løpsdagen sammen</h1>
+      <p class="lede">Arrangementsportalen samler URC, arrangørklubben og partnerne rundt de samme tallene. Puljer og starttider, økonomi og arena, i ett felles kontrollrom for hvert arrangement.</p>
+      <div class="cta">
+        <a class="btn primary" id="heroCta" href="logg-inn">Logg inn</a>
+        <a class="btn" href="#verktoy">Se verktøyene</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="verktoy">
+    <div class="container">
+      <div class="shead">
+        <div style="position:relative"><div class="eyebrow inforow">Verktøyene <button class="ibtn" id="infoBtn" aria-expanded="false" aria-controls="infoPop" aria-label="Om portalen">i</button></div>
+          <div class="ipop" id="infoPop" hidden>
+            <div><b>3</b> verktøy for planlegging av løpsdagen</div>
+            <div><b>1</b> egen side per arrangement</div>
+            <div>Tilgang kun for <b>nøkkelpersoner</b> du er invitert sammen med</div>
+          </div>
+          <h2>Fra startplan til stadionkart</h2></div>
+        <p>Hvert verktøy jobber på arrangementets egne data. Endringer lagres fortløpende, så alle ser den samme versjonen av planen.</p>
+      </div>
+      <div class="tools" id="tools"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <div class="shead">
+        <div><div class="eyebrow">Slik fungerer det</div><h2>Klargjør hele arrangementet på én side</h2></div>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="k">01</div><h3>URC oppretter arrangementet</h3><p>Hvert arrangement får sin egen side med egne data, for eksempel Løpernes Mester Granåsen.</p></div>
+        <div class="step"><div class="k">02</div><h3>Nøkkelpersoner får tilgang</h3><p>Du logger inn med en engangslenke på e-post. Ingen passord å huske, og du ser kun arrangementene du er invitert til.</p></div>
+        <div class="step"><div class="k">03</div><h3>Alle jobber i samme plan</h3><p>Endringer lagres og vises for alle med tilgang. Når planen er spikret, kan URC låse verktøyet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <div class="shead">
+        <div><div class="eyebrow">Tilgang</div><h2>Din rolle</h2></div>
+        <p>Hver person får en rolle per arrangement. Rollen avgjør hvilke verktøy du har tilgang til, og hva du kan endre.</p>
+      </div>
+      <div class="roles">
+        <div class="card role">
+          <span class="chip gold">URC</span>
+          <h3>URC-admin</h3><div class="who">Format, tidtaking og nasjonale partnere</div>
+          <ul><li>Full tilgang til alle verktøy</li><li>Oppretter arrangementer og inviterer nøkkelpersoner</li><li>Låser planer og henter fram tidligere versjoner</li></ul>
+        </div>
+        <div class="card role">
+          <span class="chip sage">Arrangør</span>
+          <h3>Medarrangør</h3><div class="who">Klubben som arrangerer lokalt</div>
+          <ul><li>Planlegger puljer og starttider i løpssimulatoren</li><li>Regner på klubbens økonomi i arrangementskalkulatoren</li><li>Rigger arenaen i arenarigg</li></ul>
+        </div>
+        <div class="card role">
+          <span class="chip">Partner</span>
+          <h3>Sponsor og samarbeidspartner</h3><div class="who">Synlighet og leveranser på arenaen</div>
+          <ul><li>Følger løpsplanen og starttidene</li><li>Ser arenaoppsettet og hvor partnerflatene står</li><li>Alltid oppdatert på siste versjon av planen</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <div class="card story">
+        <img src="assets/img/partner.jpg" alt="Løpere samlet under startportalen på stadion i Granåsen" loading="lazy">
+        <div class="txt">
+          <div class="eyebrow">Bygget på erfaring</div>
+          <h2>Testet i Granåsen</h2>
+          <p>Løpernes Mester ble arrangert for første gang i Granåsen i oktober 2026: Fem etapper, én arena og ett sekretariat i sentrum av alt.</p>
+          <p>Verktøyene bygger på det vi lærte der. Hvordan puljer, tidtaking og løperflyt henger sammen på én arena, og hva det koster å gjøre det riktig.</p>
+          <div><a class="btn sm" href="https://urcofficial.com" rel="noopener">Om URC og Løpernes Mester</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="container">
+      <div class="eyebrow">Medarrangør eller partner?</div>
+      <h2>Logg inn med e-posten du er registrert med</h2>
+      <p>Mangler du tilgang til et arrangement, ta kontakt med URC, så legger vi deg til.</p>
+      <div class="cta">
+        <a class="btn primary" id="finalCta" href="logg-inn">Logg inn</a>
+        <a class="btn" href="mailto:urcsportsno@gmail.com?subject=Tilgang%20til%20arrangementsportalen">Kontakt URC</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="container">
+    <span>URC · Ultimate Running Championship</span>
+    <span><a href="https://urcofficial.com">urcofficial.com</a> · <a href="mailto:urcsportsno@gmail.com">urcsportsno@gmail.com</a></span>
+  </div>
+</footer>
+
+<script>
+(async function () {
+  const P = window.Portal;
+  document.getElementById('logo').innerHTML = P.LOGO;
+  document.getElementById('brand').href = P.page('');
+  const login = P.page('logg-inn');
+  ['topCta', 'heroCta', 'finalCta'].forEach(id => document.getElementById(id).href = login);
+  document.getElementById('tools').innerHTML = Object.entries(P.TOOLS).map(([k, t], i) => `
+    <article class="card tool${t.soon ? ' soon' : ''}">
+      <div class="row"><div class="ticon">${P.ICONS[k]}</div><span class="chip ${t.soon ? 'gold' : 'sage'}">${t.soon ? 'Under utvikling' : 'I bruk'}</span></div>
+      <div><span class="n">0${i + 1}</span><h3>${P.shy(t.name)}</h3></div>
+      <div class="lede">${t.lede}</div>
+      <p>${t.desc}</p>
+    </article>`).join('');
+  const ib = document.getElementById('infoBtn'), ip = document.getElementById('infoPop');
+  ib.onclick = () => { ip.hidden = !ip.hidden; ib.setAttribute('aria-expanded', !ip.hidden); };
+  P.ready();
+  try {
+    const u = !P.DEMO && await P.api.user();
+    if (u) ['topCta', 'heroCta', 'finalCta'].forEach(id => { const a = document.getElementById(id); a.href = P.page('arrangementer'); a.textContent = 'Mine arrangementer'; });
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

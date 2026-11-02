@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Arrangement · URC Arrangementsportal</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1626">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/portal.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/portal.js"></script>
+<style>
+.evhero{position:relative;border-bottom:1px solid var(--line);overflow:hidden}
+.evhero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;opacity:.22;filter:saturate(.5)}
+.evhero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 20%,rgba(11,22,38,.6))}
+.evhero .container{position:relative;z-index:1;padding-top:28px;padding-bottom:40px}
+.back{display:inline-flex;gap:6px;color:var(--muted);text-decoration:none;font-size:14px;margin-bottom:34px}
+.back:hover{color:var(--fg)}
+.evrow{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px}
+.evrow h1{font-size:clamp(40px,6vw,72px);margin:12px 0 10px;max-width:16ch}
+.evrow .meta{color:#c9d6e3;font-size:17px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.count{text-align:right}
+.count b{display:block;font-family:var(--f-display);font-weight:700;font-size:clamp(56px,8vw,96px);line-height:.85}
+.count span{font-family:var(--f-display);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-size:14px}
+@media (max-width:640px){.count{text-align:left}}
+
+section.sec{padding-top:48px}
+.sec>.container>h2{margin-bottom:6px}
+.sec .sub{color:var(--muted);margin-bottom:22px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.t{display:flex;flex-direction:column;gap:14px;padding:24px;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+a.t:hover{border-color:var(--sage);transform:translateY(-2px)}
+.t .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.t h3{font-size:clamp(24px,2.4vw,28px);overflow-wrap:anywhere}
+.t .lede{font-family:var(--f-display);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-top:4px}
+.t p{color:var(--muted);font-size:15px}
+.t .foot2{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
+.t .open{color:var(--sage);font-weight:600;font-size:14px;white-space:nowrap}
+.t.soon{opacity:.75}
+.t.soon .ticon{color:var(--gold)}
+
+.admin{margin-top:56px;border-top:1px solid var(--line);padding-top:8px}
+.panel{padding:22px;margin-top:16px}
+.panel h3{margin-bottom:4px}
+.panel .sub{margin-bottom:16px;font-size:14px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+.addm{display:grid;grid-template-columns:2fr 1.4fr 1.4fr 1fr auto;gap:10px;align-items:end;margin-top:16px}
+@media (max-width:860px){.addm{grid-template-columns:1fr 1fr}}
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:12px 0;border-bottom:1px solid var(--line)}
+.toolrow:last-child{border-bottom:0}
+.toolrow .nm{font-weight:600;min-width:200px}
+.toolrow .st{color:var(--dim);font-size:13px;flex:1}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;color:var(--muted)}
+.switch input{width:auto;accent-color:var(--gold)}
+.hist{width:100%;margin-top:6px}
+.hist[hidden]{display:none}
+.hist li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px dashed var(--line);font-size:13px;color:var(--muted)}
+.hist ul{list-style:none;margin:0;padding:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+</style>
+</head>
+<body>
+<div id="demo"></div>
+<header class="top">
+  <div class="container">
+    <a class="brand" id="brand" href="./"><span id="logo"></span><i></i><span>Arrangementsportal</span></a>
+    <span class="sp"></span>
+    <span class="who" id="who"></span>
+    <button class="btn sm" id="out">Logg ut</button>
+  </div>
+</header>
+<main>
+  <div class="evhero">
+    <img src="assets/img/hero.jpg" alt="">
+    <div class="container">
+      <a class="back" id="back" href="arrangementer">← Alle arrangementer</a>
+      <div class="evrow">
+        <div>
+          <div class="chips" id="chips"></div>
+          <h1 id="evName"></h1>
+          <div class="meta" id="evMeta"></div>
+        </div>
+        <div class="count" id="count"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="container">
+      <h2>Verktøy</h2>
+      <p class="sub" id="toolSub">Velg et verktøy. Alt du endrer lagres på dette arrangementet.</p>
+      <div class="tgrid" id="tools"></div>
+
+      <div class="admin" id="admin" hidden>
+        <div class="eyebrow" style="margin-top:28px">Kun synlig for URC</div>
+        <h2 style="margin-top:8px">Administrasjon</h2>
+
+        <div class="card panel">
+          <h3>Tilgang</h3>
+          <p class="sub muted">Personene logger inn med e-postadressen sin. Arrangør kan endre i verktøyene. Partner har kun lesetilgang til løpssimulator og arenarigg.</p>
+          <div class="scroll"><table class="tbl" id="members"></table></div>
+          <form class="addm" id="addm">
+            <label class="field">E-post<input type="email" id="mEmail" placeholder="leder@klubb.no" required></label>
+            <label class="field">Navn<input id="mName" placeholder="Fornavn Etternavn"></label>
+            <label class="field">Organisasjon<input id="mOrg" placeholder="Klubb eller bedrift"></label>
+            <label class="field">Rolle<select id="mRole"><option value="arrangor">Arrangør</option><option value="partner">Partner</option></select></label>
+            <button class="btn primary" type="submit">Legg til</button>
+          </form>
+          <div id="mMsg" class="flash" style="margin-top:12px" hidden></div>
+        </div>
+
+        <div class="card panel">
+          <h3>Låsing og versjoner</h3>
+          <p class="sub muted">Lås et verktøy når planen er spikret. Arrangøren kan da se, men ikke lagre endringer. Tidligere versjoner kan hentes tilbake.</p>
+          <div id="toolAdmin"></div>
+        </div>
+
+        <form class="card panel" id="evForm">
+          <h3>Arrangementet</h3>
+          <p class="sub muted">Navn, sted, dato og status vises for alle med tilgang.</p>
+          <div class="grid2">
+            <label class="field">Navn<input id="eName" required></label>
+            <label class="field">Sted<input id="eVenue"></label>
+            <label class="field">Dato<input id="eDate" type="date"></label>
+            <label class="field">Status<select id="eStatus"></select></label>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:14px"><button class="btn primary" type="submit">Lagre</button><span id="eMsg" class="dim" style="font-size:13px"></span></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="foot"><div class="container"><span>URC · Ultimate Running Championship</span><span>Spørsmål om arrangementet: <a href="mailto:urcsportsno@gmail.com">urcsportsno@gmail.com</a></span></div></footer>
+
+<script>
+(async function () {
+  const P = window.Portal, $ = s => document.querySelector(s), esc = P.esc;
+  $('#logo').innerHTML = P.LOGO; $('#brand').href = P.page(''); $('#back').href = P.page('arrangementer');
+  try {
+    const user = await P.requireUser();
+    $('#demo').innerHTML = P.demoBanner(); P.bindDemo();
+    $('#who').textContent = user.email;
+    $('#out').onclick = async () => { await P.api.signOut(); location.href = P.page(''); };
+    const slug = P.currentSlug();
+    let ev = slug && await P.api.event(slug);
+    if (!ev || !ev.role) return P.message('Ingen tilgang', 'Fant ikke arrangementet, eller du har ikke tilgang til det.', { href: P.page('arrangementer'), label: 'Til dine arrangementer' });
+    const admin = ev.role === 'admin';
+    document.title = ev.name + ' · URC Arrangementsportal';
+
+    function renderHead() {
+      $('#evName').textContent = ev.name;
+      $('#evMeta').textContent = (ev.venue || 'Sted ikke satt') + ' · ' + P.fmtDate(ev.event_date);
+      $('#chips').innerHTML = `<span class="chip ${admin ? 'gold' : 'sage'}">${P.ROLE_LABEL[ev.role]}</span><span class="chip plain">${P.STATUS_LABEL[ev.status] || ev.status}</span>`;
+      const d = P.daysTo(ev.event_date);
+      $('#count').innerHTML = d > 0 ? `<b class="num">${d}</b><span>dager til start</span>` : d === 0 ? '<b>I dag</b><span>løpsdag</span>' : '';
+    }
+    renderHead();
+
+    let meta = await P.api.toolMeta(ev.id);
+    function renderTools() {
+      const list = Object.entries(P.TOOLS).filter(([k, t]) => (ev.tools || []).includes(k) && t.roles.includes(ev.role));
+      $('#tools').innerHTML = list.map(([k, t]) => {
+        const m = meta.find(x => x.tool === k);
+        const last = m && m.updated_at ? `Sist endret ${P.fmtStamp(m.updated_at)}${m.updated_by ? ' av ' + esc(m.updated_by.split('@')[0]) : ''}` : 'Ikke startet';
+        const chip = t.soon ? '<span class="chip gold">Under utvikling</span>' : m && m.locked ? '<span class="chip gold">Låst</span>' : ev.role === 'partner' ? '<span class="chip plain">Lesetilgang</span>' : '';
+        const inner = `<div class="row"><div class="ticon">${P.ICONS[k]}</div>${chip}</div>
+          <div><h3>${P.shy(t.name)}</h3><div class="lede">${t.lede}</div></div>
+          <p>${t.desc}</p>
+          <div class="foot2"><span>${t.soon ? 'Planlegges nå' : last}</span>${t.soon ? '' : '<span class="open">Åpne →</span>'}</div>`;
+        return t.soon ? `<div class="card t soon" aria-disabled="true">${inner}</div>` : `<a class="card t" href="${P.href(ev.slug, k)}">${inner}</a>`;
+      }).join('');
+      if (ev.role === 'partner') $('#toolSub').textContent = 'Du har lesetilgang. Du kan utforske verktøyene, men endringer lagres ikke.';
+    }
+    renderTools();
+
+    if (admin) {
+      $('#admin').hidden = false;
+      // ---- Tilgang ----
+      const mMsg = $('#mMsg');
+      const flash = (t, ok) => { mMsg.className = 'flash ' + (ok ? 'ok' : 'err'); mMsg.innerHTML = t; mMsg.hidden = false; };
+      const loginUrl = (P.DEMO ? 'https://portal.urcofficial.com' : location.origin) + '/logg-inn';
+      async function renderMembers() {
+        const ms = await P.api.members(ev.id);
+        $('#members').innerHTML = `<tr><th>Navn</th><th>Organisasjon</th><th>E-post</th><th>Rolle</th><th></th></tr>` + (ms.length ? ms.map(m => `
+          <tr><td>${esc(m.name || '')}</td><td>${esc(m.org || '')}</td><td class="num" style="font-size:13px">${esc(m.email)}</td>
+          <td><span class="chip ${m.role === 'arrangor' ? 'sage' : 'plain'}">${P.ROLE_LABEL[m.role]}</span></td>
+          <td style="text-align:right;white-space:nowrap"><button class="btn sm" data-invite="${esc(m.email)}" data-name="${esc(m.name || '')}">Kopier invitasjon</button> <button class="btn sm danger" data-rm="${esc(m.email)}">Fjern</button></td></tr>`).join('')
+          : `<tr><td colspan="5" class="dim">Ingen er lagt til ennå. URC-admin har alltid tilgang.</td></tr>`);
+      }
+      await renderMembers();
+      $('#members').addEventListener('click', async e => {
+        const b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.rm) {
+          if (!confirm('Fjerne tilgangen til ' + b.dataset.rm + '?')) return;
+          try { await P.api.removeMember(ev.id, b.dataset.rm); await renderMembers(); flash('Tilgangen er fjernet.', true); } catch (err) { flash('Kunne ikke fjerne: ' + esc(err.message)); }
+        }
+        if (b.dataset.invite) {
+          const first = (b.dataset.name || '').split(' ')[0];
+          const txt = `Hei${first ? ' ' + first : ''}!\n\nDu har fått tilgang til ${ev.name} i URC Arrangementsportal. Der finner du planleggingsverktøyene vi bruker sammen.\n\nLogg inn her: ${loginUrl}\nBruk e-postadressen ${b.dataset.invite}, så får du en innloggingslenke på e-post. Ingen passord å huske.\n\nHilsen URC`;
+          try { await navigator.clipboard.writeText(txt); flash('Invitasjonsteksten er kopiert. Lim den inn i en e-post eller melding.', true); }
+          catch (err) { flash('Kunne ikke kopiere automatisk:<br><textarea style="width:100%;height:140px;margin-top:8px;background:#081221;color:#e8f0e8;border:1px solid #29496f;border-radius:6px;padding:8px">' + esc(txt) + '</textarea>', true); }
+        }
+      });
+      $('#addm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = $('#mEmail').value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return flash('Skriv inn en gyldig e-postadresse.');
+        try {
+          await P.api.addMember(ev.id, { email, name: $('#mName').value.trim(), org: $('#mOrg').value.trim(), role: $('#mRole').value });
+          ['#mEmail', '#mName', '#mOrg'].forEach(s => $(s).value = '');
+          await renderMembers(); flash(`${esc(email)} er lagt til. Trykk «Kopier invitasjon» for å sende innloggingsinfo.`, true);
+        } catch (err) { flash('Kunne ikke legge til: ' + esc(err.message)); }
+      });
+
+      // ---- Låsing og versjoner ----
+      async function renderToolAdmin() {
+        meta = await P.api.toolMeta(ev.id);
+        const rows = Object.entries(P.TOOLS).filter(([k, t]) => !t.soon && (ev.tools || []).includes(k));
+        $('#toolAdmin').innerHTML = rows.map(([k, t]) => {
+          const m = meta.find(x => x.tool === k);
+          return `<div class="toolrow"><span class="nm">${t.name}</span>
+            <span class="st">${m ? 'Sist endret ' + P.fmtStamp(m.updated_at) + (m.updated_by ? ' av ' + esc(m.updated_by) : '') : 'Ingen data lagret ennå'}</span>
+            ${m ? `<label class="switch"><input type="checkbox" data-lock="${k}"${m.locked ? ' checked' : ''}> Låst</label>
+            <button class="btn sm" data-hist="${k}"${P.DEMO ? ' disabled title="Ikke tilgjengelig i demomodus"' : ''}>Versjoner</button>` : ''}
+            <div class="hist" id="hist-${k}" hidden></div></div>`;
+        }).join('');
+        renderTools();
+      }
+      await renderToolAdmin();
+      $('#toolAdmin').addEventListener('change', async e => {
+        const k = e.target.dataset.lock; if (!k) return;
+        try { await P.api.setLock(ev.id, k, e.target.checked); await renderToolAdmin(); } catch (err) { alert('Kunne ikke endre låsen: ' + err.message); }
+      });
+      $('#toolAdmin').addEventListener('click', async e => {
+        const b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.hist) {
+          const box = $('#hist-' + b.dataset.hist);
+          if (!box.hidden) { box.hidden = true; return; }
+          const h = await P.api.history(ev.id, b.dataset.hist);
+          box.innerHTML = h.length ? '<ul>' + h.map(x => `<li><span>${P.fmtStamp(x.changed_at)} · ${esc(x.changed_by || 'ukjent')}</span><button class="btn sm" data-restore="${x.id}" data-tool="${b.dataset.hist}">Gjenopprett</button></li>`).join('') + '</ul>' : '<p class="dim" style="font-size:13px;margin-top:6px">Ingen tidligere versjoner ennå.</p>';
+          box.hidden = false;
+        }
+        if (b.dataset.restore) {
+          if (!confirm('Gjenopprette denne versjonen? Dagens versjon lagres i historikken.')) return;
+          try { await P.api.restore(ev.id, b.dataset.tool, +b.dataset.restore); await renderToolAdmin(); } catch (err) { alert('Kunne ikke gjenopprette: ' + err.message); }
+        }
+      });
+
+      // ---- Arrangementet ----
+      $('#eStatus').innerHTML = Object.entries(P.STATUS_LABEL).map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+      $('#eName').value = ev.name; $('#eVenue').value = ev.venue || ''; $('#eDate').value = ev.event_date || ''; $('#eStatus').value = ev.status;
+      $('#evForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const patch = { name: $('#eName').value.trim(), venue: $('#eVenue').value.trim() || null, event_date: $('#eDate').value || null, status: $('#eStatus').value };
+        try { await P.api.updateEvent(ev.id, patch); ev = { ...ev, ...patch }; renderHead(); $('#eMsg').textContent = 'Lagret.'; }
+        catch (err) { $('#eMsg').textContent = 'Kunne ikke lagre: ' + err.message; }
+      });
+    }
+    P.ready();
+  } catch (e) { console.error(e); P.message('Noe gikk galt', P.esc(e.message || e), { href: P.page('arrangementer'), label: 'Til dine arrangementer' }); }
+})();
+</script>
+</body>
+</html>
