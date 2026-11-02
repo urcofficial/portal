@@ -2,10 +2,10 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/:slug/lopssimulator", "destination": "/verktoy/lopssimulator.html" },
-    { "source": "/:slug/arrangementskalkulator", "destination": "/verktoy/arrangementskalkulator.html" },
-    { "source": "/:slug/arenarigg", "destination": "/verktoy/arenarigg.html" },
-    { "source": "/:slug([a-z0-9][a-z0-9-]{1,40})", "destination": "/arrangement.html" }
+    { "source": "/:slug/lopssimulator", "destination": "/verktoy/lopssimulator" },
+    { "source": "/:slug/arrangementskalkulator", "destination": "/verktoy/arrangementskalkulator" },
+    { "source": "/:slug/arenarigg", "destination": "/verktoy/arenarigg" },
+    { "source": "/:slug([a-z0-9][a-z0-9-]{1,40})", "destination": "/arrangement" }
   ],
   "headers": [
     {
