@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="nb" data-portal-tool>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Arenarigg · URC Arrangementsportal</title>
+<meta name="robots" content="noindex">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/portal.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#0b1626;--panel:#0f2035;--line:#1e3a5f;--fg:#e8f0e8;--muted:#8fa3b8;--sage:#a8c5a0;--gold:#f5a623}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 Barlow,system-ui,sans-serif;padding:0 max(16px,env(safe-area-inset-left,0px)) 48px}
+.wrap{max-width:900px;margin:0 auto;padding-top:40px}
+.eyebrow{font:600 13px "Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+h1{font:700 clamp(34px,5vw,54px)/1 "Barlow Condensed",sans-serif;text-transform:uppercase;margin:10px 0 14px}
+.lede{color:var(--muted);max-width:60ch;margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.c{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.c h3{font:700 18px "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.03em;margin:0 0 6px}
+.c p{margin:0;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Under utvikling</div>
+  <h1>Arenarigg</h1>
+  <p class="lede">Nærkart over arenaen der alt som skal rigges får sin plass. Verktøyet planlegges nå. Dette er arbeidsgrunnlaget.</p>
+  <div class="grid">
+    <div class="c"><h3>Start og mål</h3><p>Start- og målområde for hver etappe, med portaler og franskgjerder.</p></div>
+    <div class="c"><h3>Tidtaking</h3><p>Tidtakingssoner, matter og posisjon for tidtakere per etappe.</p></div>
+    <div class="c"><h3>Løperflyt</h3><p>Bevegelsessoner mellom etappene, merking og sperring av stadion.</p></div>
+    <div class="c"><h3>Puljer</h3><p>Oppstillingsområder for startpuljer og venteområder.</p></div>
+    <div class="c"><h3>Funksjoner</h3><p>Sekretariat, speaker, storskjerm, sanitet, toaletter og premieutdeling.</p></div>
+    <div class="c"><h3>Publikum og partnere</h3><p>Publikumssoner, sponsorflater, biler og stands.</p></div>
+  </div>
+</div>
+<script>Portal.bootTool('arenarigg');</script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arrangementskalkulator · URC Arrangementsportal</title>
+<meta name="robots" content="noindex">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/portal.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0b1626; --panel:#0f2035; --panel-2:#13283f; --line:#1e3a5f; --line-2:#29496f;
+  --fg:#e8f0e8; --muted:#8fa3b8; --dim:#5e7590;
+  --sage:#a8c5a0; --gold:#f5a623; --bad:#ff5a5f; --good:#5fd39a;
+  --s-club:#3f9e6e; --s-urc:#c98422;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45;
+  padding:20px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1380px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.02;text-transform:uppercase}
+h2{font-size:19px;text-transform:uppercase;letter-spacing:.04em}
+h3{font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--sage)}
+.eyebrow{font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .dim{color:var(--dim)}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:16px}
+header .lede{max-width:64ch;color:var(--muted);margin:8px 0 0}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 13px/1 var(--f-body);color:var(--fg);background:var(--panel);border:1px solid var(--line-2);border-radius:5px;padding:9px 12px;cursor:pointer}
+.btn:hover{border-color:var(--sage)}
+.btn.on{background:var(--sage);color:#0b1626;border-color:var(--sage)}
+.btn.small{padding:5px 8px;font-size:12px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:20px;align-items:start}
+@media (max-width:1060px){.main{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.sticky{position:sticky;top:12px}
+@media (max-width:1060px){.sticky{position:static}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0}
+.card-h{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+.card-h p{margin:0;color:var(--muted);font-size:12.5px}
+.card-b{padding:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px 12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+label.f .hint{color:var(--dim);font-size:11px}
+input[type=text],input[type=number],select{font:500 13px var(--f-mono);color:var(--fg);background:#0a1729;border:1px solid var(--line-2);border-radius:4px;padding:6px 7px;width:100%;min-width:0}
+input[type=number]{text-align:right}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.slider{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:10px;align-items:center;margin-bottom:12px}
+.slider .big{font-family:var(--f-display);font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--fg);grid-column:1/-1}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fg);cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font:600 11px/1.2 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td.r,th.r{text-align:right}
+tr.sum td{font-weight:600;border-top:1px solid var(--line-2);border-bottom:none}
+tr.total td{font-family:var(--f-display);font-size:18px;font-weight:700;border-bottom:none;padding-top:10px}
+tr.sub td{color:var(--muted);font-size:12.5px}
+td input[type=number]{width:96px}
+td input[type=text]{min-width:120px}
+.edit td{padding:4px 4px}
+.x{background:none;border:0;color:var(--dim);cursor:pointer;font-size:16px;padding:2px 6px}
+.x:hover{color:var(--bad)}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;padding:10px 12px}
+.kpi b{display:block;font-family:var(--f-display);font-size:28px;line-height:1.05;font-weight:700}
+.kpi span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi small{display:block;color:var(--dim);font-size:11.5px;margin-top:3px}
+.note{font-size:12px;color:var(--muted);border-left:2px solid var(--gold);padding:6px 10px;background:rgba(245,166,35,.06);border-radius:0 4px 4px 0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.split ul{margin:8px 0 0;padding-left:18px}
+.split li{margin:4px 0}
+.badge{display:inline-block;font:600 11px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted)}
+.badge.gold{color:var(--gold);border-color:rgba(245,166,35,.5)}
+.scroll{overflow-x:auto}
+/* chart */
+#chart{position:relative;width:100%}
+#chart svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.legend i{display:inline-block;width:18px;height:0;border-top:2px solid var(--c);vertical-align:middle;margin-right:6px}
+.legend i.dash{border-top-style:dashed}
+.tip{position:absolute;pointer-events:none;background:#081120;border:1px solid var(--line-2);border-radius:6px;padding:8px 10px;font-size:12px;min-width:170px;opacity:0;transition:opacity .08s;z-index:5}
+.tip .h{color:var(--muted);margin-bottom:4px}
+.tip .row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.tip .row span{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.tip .row span i{width:12px;border-top:2px solid var(--c)}
+.tip .row b{font-family:var(--f-mono);font-weight:500;color:var(--fg)}
+details summary{cursor:pointer;color:var(--muted);font-size:12.5px;margin-top:10px}
+.intern{display:none}
+body.show-intern .intern{display:block}
+.foot{color:var(--dim);font-size:12px}
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel-2:#f5f7f9;--line:#d5dde5;--line-2:#c2ccd6;--fg:#0d1b2e;--muted:#4a5a6b;--dim:#6b7b8c}
+  body{padding:0;font-size:11.5px}
+  .toolbar,.x,.addrow,details{display:none!important}
+  .main{grid-template-columns:1fr 1fr}
+  .sticky{position:static}
+  .card{break-inside:avoid}
+  input{border:none!important;background:transparent!important;color:#0d1b2e!important;padding:0!important}
+  input[type=range]{display:none}
+  .tip{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="eyebrow" id="toolEyebrow">Løpernes Mester</div>
+    <h1>Arrangements&shy;kalkulator</h1>
+    <p class="lede">Hva klubben tjener, hva URC leverer, og hva arrangementet krever av dugnad. Alle tall kan endres. Beløp er eks. MVA der ikke annet står.</p>
+  </div>
+  <div class="toolbar">
+    <button class="btn" data-preset="ordinaer">Ordinær pris</button>
+    <button class="btn" data-preset="pilot">Pilotpris 2027</button>
+    <button class="btn" id="tgIntern" aria-pressed="false">Vis URC-intern</button>
+    <button class="btn" onclick="window.print()">Skriv ut / PDF</button>
+  </div>
+</header>
+
+<div class="main">
+<!-- ============ INPUT ============ -->
+<div class="col">
+
+  <section class="card">
+    <div class="card-h"><h2>Arrangementet</h2><p>Hvem, hvor og hvor mange</p></div>
+    <div class="card-b">
+      <div class="grid" style="margin-bottom:14px">
+        <label class="f">Arrangørklubb<input type="text" data-k="klubb"></label>
+        <label class="f">Sted<input type="text" data-k="sted"></label>
+        <label class="f">Dato<input type="text" data-k="dato"></label>
+      </div>
+      <div class="slider">
+        <span class="big">Betalende deltakere</span>
+        <input type="range" min="50" max="600" step="10" data-k="betalende" aria-label="Betalende deltakere">
+        <input type="number" min="0" max="600" step="10" data-k="betalende" aria-label="Betalende deltakere, tall">
+      </div>
+      <div class="grid">
+        <label class="f">Fribilletter fra URC<input type="number" min="0" data-k="fri"><span class="hint">Normalt maks 50. Påvirker puljer, ikke klubbens økonomi</span></label>
+        <label class="f">Startkontingent (kr)<input type="number" min="0" step="10" data-k="kontingent"><span class="hint">Unntatt MVA</span></label>
+        <label class="f">Lokale sponsorer (kr)<input type="number" min="0" step="1000" data-k="lokaleSponsorer"><span class="hint">Går direkte til klubben</span></label>
+        <label class="f">Kiosk og annet salg, netto (kr)<input type="number" min="0" step="1000" data-k="andreInnt"></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>URC-leveransen</h2><p>Lisens per deltaker + fast tjenestepris</p></div>
+    <div class="card-b">
+      <h3>Lisens</h3>
+      <div class="grid" style="margin:8px 0 6px">
+        <label class="f">Pris per betalende (kr)<input type="number" min="0" step="5" data-k="lisensPris"></label>
+        <label class="f">Minimum antall lisenser<input type="number" min="0" step="10" data-k="minLis"><span class="hint" id="minLisHint"></span></label>
+        <label class="f">Rabatt på lisens (%)<input type="number" min="0" max="100" step="5" data-k="rabLis"></label>
+      </div>
+      <p class="muted" style="margin:0 0 14px;font-size:12.5px">Dekker merkevaren, formatet, poengberegning, Stat Card, påmelding og betalingshåndtering, resultatplattform, startnummer med URC- og sponsorprofil, markedsføring i URC-kanalene og eksponering for nasjonale sponsorer.</p>
+
+      <h3>Påmelding og betaling</h3>
+      <div class="grid" style="margin:8px 0 14px">
+        <label class="f">Betalingsgebyr (% av kontingent)<input type="number" min="0" step="0.1" data-k="gebyrPst"><span class="hint">Stripe/Vipps, grovt anslag. Trekkes i oppgjøret</span></label>
+      </div>
+
+      <h3>Tilvalg for klubben</h3>
+      <div class="scroll"><table class="edit" style="margin-top:6px">
+        <thead><tr><th>Valgt</th><th>Tilvalg</th><th class="r">URC-pris per betalende</th><th class="r">Klubbens alternativ per deltaker</th></tr></thead>
+        <tbody id="opsRows"></tbody>
+      </table></div>
+      <p class="dim" style="font-size:12px;margin:8px 0 14px">Ikke valgt: klubben kjøper selv til «alternativ»-prisen, som legges i klubbens kostnader. Tilvalg får ikke lisens- eller tjenesterabatt.</p>
+
+      <h3>Tjeneste på arrangementsdagen</h3>
+      <div class="scroll"><table class="edit" style="margin-top:6px">
+        <thead><tr><th>Post</th><th class="r">Beløp (kr)</th><th></th></tr></thead>
+        <tbody id="tjRows"></tbody>
+        <tfoot>
+          <tr class="sum"><td>Tjenestepris, liste</td><td class="r num" id="tjSum"></td><td></td></tr>
+        </tfoot>
+      </table></div>
+      <button class="btn small addrow" data-add="tjeneste" style="margin-top:8px">+ Legg til post</button>
+
+      <h3 style="margin-top:16px">Rabatt og MVA</h3>
+      <div class="grid" style="margin-top:8px">
+        <label class="f">Rabatt på tjeneste (%)<input type="number" min="0" max="100" step="5" data-k="rabTj"></label>
+        <label class="f">Annen rabatt (kr)<input type="number" min="0" step="1000" data-k="rabKr"><span class="hint">F.eks. kort reise</span></label>
+      </div>
+      <label class="check" style="margin-top:12px"><input type="checkbox" data-k="mva"><span>Legg 25 % MVA på URC-fakturaen (lisens, tjeneste og tilvalg)<br><span class="dim" style="font-size:12px">Gjelder ikke startkontingenten, som er unntatt. Fakturaen fra URC AS er etter alt å dømme MVA-pliktig, og blir en kostnad for klubben hvis den ikke kan trekke fra. Avklares med regnskapsfører.</span></span></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Klubbens arrangementskostnader</h2><p>Grovanslag fra budsjettet 23.10</p></div>
+    <div class="card-b">
+      <div class="scroll"><table class="edit">
+        <thead><tr><th>Post</th><th>Grunnlag</th><th class="r">Sats (kr)</th><th class="r">Sum</th><th></th></tr></thead>
+        <tbody id="kostRows"></tbody>
+      </table></div>
+      <button class="btn small addrow" data-add="kost" style="margin-top:8px">+ Legg til post</button>
+      <div class="grid" style="margin-top:14px">
+        <label class="f">Uforutsett (% av kostnadene)<input type="number" min="0" step="1" data-k="uforPst"></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Ressursbehov fra klubben</h2><p id="resLede"></p></div>
+    <div class="card-b">
+      <div class="grid" style="margin-bottom:12px">
+        <label class="f">Deltakere per pulje<input type="number" min="5" step="5" data-k="puljeStr"></label>
+        <label class="f">Minutter mellom puljestarter<input type="number" min="1" step="1" data-k="puljeInt"></label>
+        <label class="f">Minutter per pulje, alle fem etapper<input type="number" min="10" step="5" data-k="tidPulje"></label>
+        <label class="f">Oppmøte og avslutning (timer)<input type="number" min="0" step="0.5" data-k="oppmote"><span class="hint">Legges på løpstiden</span></label>
+      </div>
+      <div class="scroll"><table class="edit">
+        <thead><tr><th>Rolle</th><th class="r">Personer</th><th>Timer</th><th class="r">Dugnadstimer</th><th></th></tr></thead>
+        <tbody id="rolleRows"></tbody>
+        <tfoot>
+          <tr class="sum"><td>Sum</td><td class="r num" id="persSum"></td><td></td><td class="r num" id="timerSum"></td><td></td></tr>
+        </tfoot>
+      </table></div>
+      <button class="btn small addrow" data-add="rolle" style="margin-top:8px">+ Legg til rolle</button>
+      <p class="dim" style="font-size:12px;margin:10px 0 0">«Løp» = løpstid for alle puljer pluss oppmøte. Rigg og nedrigg har faste timer og kan være de samme personene som på løpsdagen. URC stiller i tillegg to personer på tidtaking og live-resultater.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ RESULTAT ============ -->
+<div class="col sticky">
+
+  <section class="card">
+    <div class="card-h"><h2 id="resTitle">Resultat for klubben</h2><span class="badge gold" id="prisBadge">Ordinær pris</span></div>
+    <div class="card-b">
+      <div class="kpis">
+        <div class="kpi"><span>Klubbens overskudd</span><b class="num" id="kOver"></b><small id="kOverS"></small></div>
+        <div class="kpi"><span>Break-even</span><b class="num" id="kBe"></b><small>betalende deltakere</small></div>
+        <div class="kpi"><span>Per dugnadstime</span><b class="num" id="kTime"></b><small id="kTimeS"></small></div>
+        <div class="kpi"><span>Faktura fra URC</span><b class="num" id="kFakt"></b><small id="kFaktS"></small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Klubbens regnskap</h2><p id="regnLede"></p></div>
+    <div class="card-b"><table id="regn"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Faktura fra URC AS</h2><p>Trekkes i oppgjøret</p></div>
+    <div class="card-b"><table id="fakt"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Oppgjør etter arrangementet</h2><p>URC tar imot påmeldingene og betaler ut til klubben</p></div>
+    <div class="card-b"><table id="oppgj"></table>
+      <p class="dim" style="font-size:12px;margin:10px 0 0">Lokale sponsorer og kiosk går direkte til klubben og er ikke med i oppgjøret.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Overskudd etter antall deltakere</h2><p>Øvrige tall holdes fast</p></div>
+    <div class="card-b">
+      <div class="legend">
+        <span><i style="--c:var(--s-club)"></i>Klubbens overskudd</span>
+        <span><i class="dash" style="--c:var(--s-urc)"></i>Faktura fra URC</span>
+      </div>
+      <div id="chart"><svg id="svg" role="img" aria-label="Klubbens overskudd og URC-faktura etter antall betalende deltakere"></svg><div class="tip" id="tip"></div></div>
+      <details><summary>Vis som tabell</summary><div class="scroll"><table id="sensTab"></table></div></details>
+    </div>
+  </section>
+
+  <section class="card intern">
+    <div class="card-h"><h2>URC-intern</h2><span class="badge">Vises ikke for klubben</span></div>
+    <div class="card-b">
+      <div class="grid" style="margin-bottom:12px">
+        <label class="f">Nasjonale sponsorer (kr)<input type="number" min="0" step="1000" data-ik="nasjSponsor"><span class="hint">Hoved + etapper</span></label>
+        <label class="f">Honorar inviterte profiler (kr)<input type="number" min="0" step="1000" data-ik="honorar"></label>
+        <label class="f">Backup-tidtaking, innleid (kr)<input type="number" min="0" step="1000" data-ik="backup"><span class="hint">Innleid ekstern tidtaking</span></label>
+        <label class="f">Faktisk reise og opphold (kr)<input type="number" min="0" step="500" data-ik="reiseFaktisk"></label>
+        <label class="f">Pengepremier og uttrekkspremier (kr)<input type="number" min="0" step="1000" data-ik="pengepremier"><span class="hint">Dekkes av nasjonale sponsorer</span></label>
+        <label class="f">Startnummer, innkjøp per stk (kr)<input type="number" min="0" step="1" data-ik="startnrKost"><span class="hint">Alle deltakere, inkl. fribilletter</span></label>
+      </div>
+      <div class="scroll"><table class="edit" style="margin-bottom:12px">
+        <thead><tr><th>Tilvalg</th><th class="r">URC innkjøp per stk</th></tr></thead>
+        <tbody id="opsInnkjop"></tbody>
+      </table></div>
+      <table id="urcTab"></table>
+      <p class="dim" style="font-size:12px;margin:10px 0 0">Bidrag før lønn. Personellkostnaden ligger i lønnsbudsjettet til URC AS.</p>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<section class="card">
+  <div class="card-h"><h2>Ansvarsfordeling</h2><p>Utkast til avtale. Gjelder fullt etablerte arrangementer fra 2028, testes i 2027</p></div>
+  <div class="card-b split">
+    <div>
+      <h3 id="ansvKlubb">Klubben</h3>
+      <ul>
+        <li>Arena og løyper: rigging, merking, sperring og nedrigg</li>
+        <li>Sekretariat: innsjekk, startnummer og informasjon</li>
+        <li>Funksjonærer, løypevakter, startere og puljeverter</li>
+        <li>Speaker (egen eller innleid)</li>
+        <li>Sanitet og førstehjelp</li>
+        <li>Tillatelser fra grunneier, kommune og arena</li>
+        <li>Ordinære premier (URC-medaljer kan kjøpes som tilvalg)</li>
+        <li>Forsikring, parkering og kiosk</li>
+        <li>Lokale sponsorer og lokal markedsføring</li>
+      </ul>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px"><b>Inntekter:</b> Startkontingent etter URC-faktura og gebyr, lokale sponsorer, kiosk og salg.</p>
+    </div>
+    <div>
+      <h3>URC AS</h3>
+      <ul>
+        <li>Format, merkevare og godkjenning av løyper og arena-profil</li>
+        <li>Påmelding og betaling, med utbetaling til klubben etter arrangementet</li>
+        <li>Tidtaking og live-resultater på storskjerm, med to personer på stedet</li>
+        <li>Poengberegning, trøyegradering, Stat Card og resultatliste</li>
+        <li>Startnummer med URC- og sponsorprofil</li>
+        <li>Markedsføring i URC-kanalene</li>
+        <li>Nasjonale sponsorer, inviterte profiler og fribilletter</li>
+        <li>Pengepremier og uttrekkspremier, finansiert av URCs sponsorer</li>
+        <li>Tilvalg: URC-medaljer og deltakerpakker</li>
+        <li>Etterarbeid på urcofficial.com: bilder, video og resultater</li>
+      </ul>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px"><b>Inntekter:</b> Lisens, tjenestepris og nasjonale sponsorer.</p>
+    </div>
+  </div>
+</section>
+
+<p class="foot">Utkast. Priser på medalje, deltakerpakke og startnummer er plassholdere. Lisens beregnes av betalende deltakere, ikke fribilletter.</p>
+</div>
+
+<script type="text/x-portal-tool">
+const fmt = new Intl.NumberFormat('nb-NO',{maximumFractionDigits:0});
+const kr = v => (v<0?'−':'') + fmt.format(Math.abs(Math.round(v)));
+const krk = v => kr(v) + ' kr';
+const pct = v => (Math.round(v*10)/10).toString().replace('.',',') + ' %';
+const tt = v => (Math.round(v*10)/10).toString().replace('.',',');
+
+const BASE = {
+  klubb:'', sted:'', dato:'',
+  betalende:500, fri:50, kontingent:500, lokaleSponsorer:0, andreInnt:0,
+  lisensPris:100, minLis:200, rabLis:0, rabTj:0, rabKr:0, mva:false,
+  opsjoner:[
+    {navn:'URC-medalje til alle betalende', valgt:true, pris:40, alternativ:45},
+    {navn:'Deltakerpakke med sponsorprofil', valgt:false, pris:50, alternativ:0}
+  ],
+  tjeneste:[
+    {navn:'To ressurser, rigg og drift', belop:25000},
+    {navn:'Reise og opphold', belop:5000},
+    {navn:'Tidtakersystem og live-resultater på skjerm', belop:5000},
+    {navn:'Forberedelse, test og etterarbeid', belop:5000}
+  ],
+  gebyrPst:2, uforPst:10,
+  kost:[
+    {navn:'Leie av arena', type:'fast', belop:10000},
+    {navn:'Ordinære premier (pall og klasser)', type:'fast', belop:10000},
+    {navn:'Sanitet og førstehjelp', type:'fast', belop:5000},
+    {navn:'Lyd og speaker', type:'fast', belop:5000},
+    {navn:'Løypemerking, telt, toaletter, skilt', type:'fast', belop:1000},
+    {navn:'Arrangementsforsikring', type:'fast', belop:5000},
+    {navn:'Mat til funksjonærer', type:'funksjonaer', belop:100}
+  ],
+  puljeStr:50, puljeInt:11, tidPulje:70, oppmote:1.5,
+  roller:[
+    {navn:'Løypevakter, Gate', antall:4, type:'event'},
+    {navn:'Løypevakter, Sprint', antall:1, type:'event'},
+    {navn:'Løypevakter, Teknisk', antall:4, type:'event'},
+    {navn:'Løypevakter, Vertikal', antall:2, type:'event'},
+    {navn:'Løypevakter, Utfor', antall:3, type:'event'},
+    {navn:'Start og mål på torget', antall:4, type:'event'},
+    {navn:'Start og mål i toppen (Vertikal/Utfor)', antall:2, type:'event'},
+    {navn:'Sekretariat', antall:3, type:'event'},
+    {navn:'Puljeverter', antall:2, type:'event'},
+    {navn:'Sanitet og førstehjelp', antall:2, type:'event'},
+    {navn:'Parkering og trafikk', antall:2, type:'event'},
+    {navn:'Speaker', antall:1, type:'event'},
+    {navn:'Premieutdeling og vertskap', antall:1, type:'event'},
+    {navn:'Kiosk', antall:0, type:'event'},
+    {navn:'Rigg av arena og løyper', antall:8, type:'fast', timer:5},
+    {navn:'Nedrigg', antall:8, type:'fast', timer:2.5}
+  ]
+};
+// URC-interne tall: hentes kun for URC-admin fra egen tabell (calc_internal). Ingen tall her i koden.
+const INTERN0 = {nasjSponsor:0, honorar:0, backup:0, reiseFaktisk:0, pengepremier:0, startnrKost:0, innkjop:[]};
+const PRESETS = {
+  ordinaer:{label:'Ordinær pris', set:{rabLis:0, rabTj:0, rabKr:0, tj:{'Reise og opphold':5000}}},
+  pilot:{label:'Pilotpris 2027', set:{rabLis:25, rabTj:25, rabKr:0, tj:{'Reise og opphold':0}}}
+};
+const P0 = window.PORTAL || null;
+let S = JSON.parse(JSON.stringify(BASE));
+if (P0 && P0.state) S = Object.assign(S, JSON.parse(JSON.stringify(P0.state)));
+else if (P0) { const e = P0.event; S.sted = e.venue || ''; if (e.event_date) { const [y,m,d] = e.event_date.split('-'); S.dato = d+'.'+m+'.'+y; } }
+let I = Object.assign(JSON.parse(JSON.stringify(INTERN0)), (P0 && P0.internal) || {});
+const SHOW_INTERN = !P0 || P0.isAdmin;
+if (!SHOW_INTERN) { document.querySelectorAll('.intern').forEach(el => el.remove()); const t = document.getElementById('tgIntern'); if (t) t.remove(); }
+if (P0) document.getElementById('toolEyebrow').textContent = P0.event.name + (P0.event.venue ? ' · ' + P0.event.venue : '');
+let presetLabel = S.prisLabel || 'Ordinær pris';
+
+function calc(s, nOver){
+  const n = nOver ?? s.betalende;
+  const delt = n + s.fri;
+  const lisAnt = Math.max(n, s.minLis);
+  const lisBr = lisAnt * s.lisensPris;
+  const lisRab = lisBr * s.rabLis/100;
+  const tjBr = s.tjeneste.reduce((a,r)=>a+(+r.belop||0),0);
+  const tjRab = tjBr * s.rabTj/100;
+  const rabKr = Math.min(s.rabKr, lisBr-lisRab+tjBr-tjRab);
+  const ops = s.opsjoner.map((o,i)=>({navn:o.navn, valgt:!!o.valgt,
+    urc: o.valgt ? (+o.pris||0)*n : 0,
+    egen: o.valgt ? 0 : (+o.alternativ||0)*n,
+    innkjop: o.valgt ? (+(I.innkjop||[])[i]||0)*(n+s.fri) : 0}));
+  const opsUrc = ops.reduce((a,o)=>a+o.urc,0);
+  const opsEgen = ops.reduce((a,o)=>a+o.egen,0);
+  const opsInnkjop = ops.reduce((a,o)=>a+o.innkjop,0);
+  const fEks = lisBr - lisRab + tjBr - tjRab - rabKr + opsUrc;
+  const mva = s.mva ? fEks*0.25 : 0;
+  const faktura = fEks + mva;
+  const kont = n * s.kontingent;
+  const gebyr = kont * s.gebyrPst/100;
+  const puljer = Math.max(1, Math.ceil(delt / Math.max(1,s.puljeStr)));
+  const varMin = (puljer-1)*s.puljeInt + s.tidPulje;
+  const tEvent = varMin/60 + s.oppmote;
+  let persDag=0, timer=0;
+  const roller = s.roller.map(r=>{
+    const t = r.type==='event' ? tEvent : (+r.timer||0);
+    const a = +r.antall||0;
+    if(r.type==='event') persDag += a;
+    timer += a*t;
+    return {t, sum:a*t};
+  });
+  const persRigg = Math.max(0,...s.roller.filter(r=>r.type!=='event').map(r=>+r.antall||0));
+  const kost = s.kost.map(k=>{
+    const b = +k.belop||0;
+    return k.type==='deltaker' ? b*delt : k.type==='funksjonaer' ? b*persDag : b;
+  });
+  const kostSum = kost.reduce((a,b)=>a+b,0) + opsEgen;
+  const ufor = kostSum * s.uforPst/100;
+  const arr = kostSum + ufor;
+  const innt = kont + s.lokaleSponsorer + s.andreInnt;
+  const over = innt - gebyr - arr - faktura;
+  const utbet = kont - gebyr - faktura;
+  const startnr = I.startnrKost * delt;
+  const urc = fEks + I.nasjSponsor - I.honorar - I.backup - I.reiseFaktisk - I.pengepremier - startnr - opsInnkjop;
+  return {n, delt, lisAnt, lisBr, lisRab, tjBr, tjRab, rabKr, ops, opsUrc, opsEgen, opsInnkjop, startnr, fEks, mva, faktura, kont, gebyr,
+    puljer, varMin, tEvent, persDag, persRigg, timer, roller, kost, kostSum, ufor, arr, innt, over, utbet, urc};
+}
+function breakEven(s){
+  for(let n=0;n<=3000;n+=1){ if(calc(s,n).over>=0) return n; }
+  return null;
+}
+
+/* ---------- binding ---------- */
+function bindInputs(){
+  document.querySelectorAll('[data-k]').forEach(el=>{
+    const k = el.dataset.k;
+    if(el.type==='checkbox') el.checked = !!S[k]; else el.value = S[k];
+  });
+  document.querySelectorAll('[data-ik]').forEach(el=>{ el.value = I[el.dataset.ik]; });
+}
+document.addEventListener('input', e=>{
+  const el = e.target;
+  if(el.dataset.k){
+    const k = el.dataset.k;
+    S[k] = el.type==='checkbox' ? el.checked : el.type==='number'||el.type==='range' ? (parseFloat(el.value)||0) : el.value;
+    if(k==='betalende') document.querySelectorAll('[data-k=betalende]').forEach(o=>{ if(o!==el) o.value=S.betalende; });
+    markCustom(k);
+    render(false);
+  } else if(el.dataset.ik){
+    I[el.dataset.ik] = parseFloat(el.value)||0;
+    render(false);
+  } else if(el.dataset.ilist){
+    I.innkjop[+el.dataset.i] = parseFloat(el.value)||0;
+    render(false);
+  } else if(el.dataset.list){
+    const row = S[el.dataset.list][+el.dataset.i];
+    const f = el.dataset.f;
+    row[f] = el.type==='checkbox' ? el.checked : (el.type==='number') ? (parseFloat(el.value)||0) : el.value;
+    if(el.dataset.list==='tjeneste') markCustom('tj');
+    render(false);
+  }
+});
+document.addEventListener('change', e=>{
+  const el=e.target;
+  if(el.dataset.k && el.type==='checkbox'){ S[el.dataset.k]=el.checked; render(false); }
+  if(el.dataset.list && el.tagName==='SELECT'){ S[el.dataset.list][+el.dataset.i][el.dataset.f]=el.value; render(true); }
+});
+document.addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.del){ S[b.dataset.del].splice(+b.dataset.i,1); render(true); }
+  if(b.dataset.add==='tjeneste'){ S.tjeneste.push({navn:'Ny post', belop:0}); render(true); }
+  if(b.dataset.add==='kost'){ S.kost.push({navn:'Ny post', type:'fast', belop:0}); render(true); }
+  if(b.dataset.add==='rolle'){ S.roller.push({navn:'Ny rolle', antall:1, type:'event', timer:2}); render(true); }
+  if(b.dataset.preset){ applyPreset(b.dataset.preset); }
+  if(b.id==='tgIntern'){ const on=document.body.classList.toggle('show-intern'); b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }
+});
+function applyPreset(key){
+  const p = PRESETS[key];
+  Object.entries(p.set).forEach(([k,v])=>{
+    if(k==='tj'){ Object.entries(v).forEach(([navn,bel])=>{ const r=S.tjeneste.find(t=>t.navn===navn); if(r) r.belop=bel; }); }
+    else S[k]=v;
+  });
+  presetLabel = p.label; S.prisLabel = presetLabel;
+  document.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('on', x.dataset.preset===key));
+  bindInputs(); render(true);
+}
+function markCustom(k){
+  if(['rabLis','rabTj','rabKr','tj','lisensPris','minLis'].includes(k)){
+    presetLabel='Egendefinert pris'; S.prisLabel = presetLabel;
+    document.querySelectorAll('[data-preset]').forEach(x=>x.classList.remove('on'));
+  }
+}
+
+/* ---------- editable tables ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function buildTables(){
+  document.getElementById('opsRows').innerHTML = S.opsjoner.map((o,i)=>`
+    <tr><td><input type="checkbox" style="accent-color:var(--gold)" data-list="opsjoner" data-i="${i}" data-f="valgt"${o.valgt?' checked':''} aria-label="Velg ${esc(o.navn)}"></td>
+    <td><input type="text" data-list="opsjoner" data-i="${i}" data-f="navn" value="${esc(o.navn)}" aria-label="Tilvalg"></td>
+    <td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="pris" value="${o.pris}" aria-label="URC-pris"></td>
+    <td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="alternativ" value="${o.alternativ}" aria-label="Klubbens alternativ"></td></tr>`).join('');
+  const oi = document.getElementById('opsInnkjop');
+  if (oi) oi.innerHTML = S.opsjoner.map((o,i)=>`
+    <tr><td>${esc(o.navn)}</td><td class="r"><input type="number" min="0" step="1" data-ilist="innkjop" data-i="${i}" value="${I.innkjop[i] ?? 0}" aria-label="Innkjøp"></td></tr>`).join('');
+  document.getElementById('tjRows').innerHTML = S.tjeneste.map((r,i)=>`
+    <tr><td><input type="text" data-list="tjeneste" data-i="${i}" data-f="navn" value="${esc(r.navn)}" aria-label="Post"></td>
+    <td class="r"><input type="number" step="500" data-list="tjeneste" data-i="${i}" data-f="belop" value="${r.belop}" aria-label="Beløp"></td>
+    <td><button class="x" data-del="tjeneste" data-i="${i}" aria-label="Fjern">×</button></td></tr>`).join('');
+  const typer = {fast:'Fast', deltaker:'Per deltaker', funksjonaer:'Per funksjonær'};
+  document.getElementById('kostRows').innerHTML = S.kost.map((r,i)=>`
+    <tr><td><input type="text" data-list="kost" data-i="${i}" data-f="navn" value="${esc(r.navn)}" aria-label="Post"></td>
+    <td><select data-list="kost" data-i="${i}" data-f="type" aria-label="Grunnlag">${Object.entries(typer).map(([v,l])=>`<option value="${v}"${r.type===v?' selected':''}>${l}</option>`).join('')}</select></td>
+    <td class="r"><input type="number" step="${r.type==='fast'?1000:10}" data-list="kost" data-i="${i}" data-f="belop" value="${r.belop}" aria-label="Sats"></td>
+    <td class="r num" id="kost${i}"></td>
+    <td><button class="x" data-del="kost" data-i="${i}" aria-label="Fjern">×</button></td></tr>`).join('');
+  document.getElementById('rolleRows').innerHTML = S.roller.map((r,i)=>`
+    <tr><td><input type="text" data-list="roller" data-i="${i}" data-f="navn" value="${esc(r.navn)}" aria-label="Rolle"></td>
+    <td class="r"><input type="number" min="0" step="1" style="width:64px" data-list="roller" data-i="${i}" data-f="antall" value="${r.antall}" aria-label="Personer"></td>
+    <td><div style="display:flex;gap:6px;align-items:center">
+      <select style="width:auto" data-list="roller" data-i="${i}" data-f="type" aria-label="Timetype"><option value="event"${r.type==='event'?' selected':''}>Løp</option><option value="fast"${r.type!=='event'?' selected':''}>Fast</option></select>
+      ${r.type==='event' ? `<span class="num muted" id="rt${i}"></span>` : `<input type="number" min="0" step="0.5" style="width:64px" data-list="roller" data-i="${i}" data-f="timer" value="${r.timer??0}" aria-label="Timer">`}
+    </div></td>
+    <td class="r num" id="rs${i}"></td>
+    <td><button class="x" data-del="roller" data-i="${i}" aria-label="Fjern">×</button></td></tr>`).join('');
+}
+
+/* ---------- render ---------- */
+function row(label, val, cls='', sign=''){
+  return `<tr class="${cls}"><td>${label}</td><td class="r num">${sign}${val}</td></tr>`;
+}
+function render(rebuild){
+  if(rebuild) buildTables();
+  const c = calc(S);
+  const be = breakEven(S);
+
+  // service
+  document.getElementById('tjSum').textContent = krk(c.tjBr);
+  document.getElementById('minLisHint').textContent = 'Grunnsum ' + krk(S.minLis*S.lisensPris);
+  S.kost.forEach((k,i)=>{ const el=document.getElementById('kost'+i); if(el) el.textContent=kr(c.kost[i]); });
+  c.roller.forEach((r,i)=>{
+    const t=document.getElementById('rt'+i); if(t) t.textContent = tt(r.t)+' t';
+    const s=document.getElementById('rs'+i); if(s) s.textContent = tt(r.sum);
+  });
+  document.getElementById('persSum').textContent = c.persDag + ' + rigg';
+  document.getElementById('timerSum').textContent = fmt.format(Math.round(c.timer));
+  const h = Math.floor(c.varMin/60), m = Math.round(c.varMin%60);
+  document.getElementById('resLede').textContent = `${c.puljer} puljer · løpstid ${h} t ${m} min · ${c.persDag} funksjonærer på løpsdagen`;
+
+  // KPI
+  document.getElementById('resTitle').textContent = 'Resultat for ' + (S.klubb||'klubben');
+  document.getElementById('ansvKlubb').textContent = S.klubb || 'Klubben';
+  document.getElementById('prisBadge').textContent = presetLabel;
+  const o = document.getElementById('kOver'); o.textContent = krk(c.over); o.className = 'num ' + (c.over>=0?'pos':'neg');
+  document.getElementById('kOverS').textContent = `ved ${c.n} betalende`;
+  document.getElementById('kBe').textContent = be===null ? 'Ikke nådd' : fmt.format(be);
+  const perT = c.timer>0 ? c.over/c.timer : 0;
+  document.getElementById('kTime').textContent = krk(perT);
+  document.getElementById('kTimeS').textContent = `${fmt.format(Math.round(c.timer))} dugnadstimer`;
+  document.getElementById('kFakt').textContent = krk(c.faktura);
+  document.getElementById('kFaktS').textContent = `${pct(c.kont? c.faktura/c.kont*100 : 0)} av kontingenten` + (S.mva?' · inkl. MVA':'');
+
+  // regnskap
+  document.getElementById('regnLede').textContent = `${c.n} betalende + ${S.fri} fribilletter`;
+  document.getElementById('regn').innerHTML =
+    `<tr><th>Post</th><th class="r">kr</th></tr>` +
+    row(`Startkontingent (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
+    (S.lokaleSponsorer? row('Lokale sponsorer', kr(S.lokaleSponsorer)) : '') +
+    (S.andreInnt? row('Kiosk og annet salg', kr(S.andreInnt)) : '') +
+    row('Sum inntekter', kr(c.innt), 'sum') +
+    row(`Betalingsgebyr (${tt(S.gebyrPst)} %)`, kr(-c.gebyr)) +
+    row('Arrangementskostnader', kr(-(c.kostSum-c.opsEgen))) +
+    (c.opsEgen? row('Egne innkjøp i stedet for tilvalg', kr(-c.opsEgen)) : '') +
+    row(`Uforutsett (${tt(S.uforPst)} %)`, kr(-c.ufor), 'sub') +
+    row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
+    `<tr class="total"><td>Overskudd til klubben</td><td class="r num ${c.over>=0?'pos':'neg'}">${krk(c.over)}</td></tr>`;
+
+  // faktura
+  document.getElementById('fakt').innerHTML =
+    `<tr><th>Post</th><th class="r">kr</th></tr>` +
+    row(`Lisens (${c.lisAnt} × ${kr(S.lisensPris)})${c.lisAnt>c.n?' · minimum':''}`, kr(c.lisBr)) +
+    (c.lisRab? row(`Rabatt lisens (${tt(S.rabLis)} %)`, kr(-c.lisRab), 'sub') : '') +
+    row('Tjeneste på arrangementsdagen', kr(c.tjBr)) +
+    (c.tjRab? row(`Rabatt tjeneste (${tt(S.rabTj)} %)`, kr(-c.tjRab), 'sub') : '') +
+    (c.rabKr? row('Annen rabatt', kr(-c.rabKr), 'sub') : '') +
+    c.ops.filter(o=>o.valgt).map(o=>row(`Tilvalg: ${esc(o.navn)}`, kr(o.urc))).join('') +
+    row('Sum eks. MVA', kr(c.fEks), 'sum') +
+    (S.mva? row('MVA 25 %', kr(c.mva)) : '') +
+    `<tr class="total"><td>Til betaling${S.mva?'':' eks. MVA'}</td><td class="r num">${krk(c.faktura)}</td></tr>` +
+    `<tr class="sub"><td colspan="2" style="padding-top:12px">Effektiv pris per betalende: <b class="num" style="color:var(--fg)">${krk(c.n? c.fEks/c.n : 0)}</b> eks. MVA</td></tr>`;
+
+  // oppgjør
+  document.getElementById('oppgj').innerHTML =
+    `<tr><th>Post</th><th class="r">kr</th></tr>` +
+    row(`Startkontingent innbetalt via URC-påmeldingen (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
+    row(`Betalingsgebyr (${tt(S.gebyrPst)} % av kontingenten)`, kr(-c.gebyr)) +
+    row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
+    `<tr class="total"><td>Utbetales til klubben</td><td class="r num">${krk(c.utbet)}</td></tr>`;
+
+  // intern
+  if (SHOW_INTERN) document.getElementById('urcTab').innerHTML =
+    `<tr><th>Post</th><th class="r">kr</th></tr>` +
+    row('Lisens og tjeneste, eks. MVA', kr(c.fEks)) +
+    row('Nasjonale sponsorer', kr(I.nasjSponsor)) +
+    row('Honorar inviterte profiler', kr(-I.honorar)) +
+    row('Backup-tidtaking', kr(-I.backup)) +
+    row('Reise og opphold', kr(-I.reiseFaktisk)) +
+    row('Pengepremier og uttrekkspremier', kr(-I.pengepremier)) +
+    row(`Startnummer (${c.delt} stk)`, kr(-c.startnr)) +
+    (c.opsInnkjop? row('Innkjøp av tilvalg, inkl. fribilletter', kr(-c.opsInnkjop)) : '') +
+    `<tr class="total"><td>Bidrag til URC AS</td><td class="r num ${c.urc>=0?'pos':'neg'}">${krk(c.urc)}</td></tr>`;
+
+  drawChart(c, be);
+  if (P0) { P0.save(S); if (P0.isAdmin) P0.saveInternal(I); }
+}
+
+/* ---------- chart ---------- */
+function niceStep(range, target){
+  const raw = range/target, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const r = raw/mag; return (r<1.5?1:r<3?2:r<7?5:10)*mag;
+}
+let chartData = null;
+function drawChart(cur, be){
+  const svg = document.getElementById('svg');
+  const W = Math.max(320, document.getElementById('chart').clientWidth), H = Math.round(Math.min(340, Math.max(240, W*0.55)));
+  const m = {l:58, r:96, t:14, b:34};
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const xMax = 600;
+  const pts = [];
+  for(let n=50;n<=xMax;n+=10){ const c=calc(S,n); pts.push({n, club:c.over, urc:c.faktura}); }
+  chartData = {pts, m, W, H, xMax};
+  let yMin = Math.min(0, ...pts.map(p=>Math.min(p.club,p.urc))), yMax = Math.max(...pts.map(p=>Math.max(p.club,p.urc)));
+  const step = niceStep(yMax-yMin, 5);
+  yMin = Math.floor(yMin/step)*step; yMax = Math.ceil(yMax/step)*step;
+  const x = n => m.l + (n-50)/(xMax-50)*(W-m.l-m.r);
+  const y = v => m.t + (yMax-v)/(yMax-yMin)*(H-m.t-m.b);
+  chartData.x=x; chartData.y=y;
+  let g = '';
+  for(let v=yMin; v<=yMax+1e-6; v+=step){
+    g += `<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v===0?'#5e7590':'#1e3a5f'}" stroke-width="1"/>`;
+    g += `<text x="${m.l-8}" y="${y(v)+4}" text-anchor="end" fill="#8fa3b8" font-size="11" font-family="JetBrains Mono, monospace">${v===0?'0':(v/1000)+'k'}</text>`;
+  }
+  for(let n=100;n<=xMax;n+=100){
+    g += `<text x="${x(n)}" y="${H-m.b+18}" text-anchor="middle" fill="#8fa3b8" font-size="11" font-family="JetBrains Mono, monospace">${n}</text>`;
+  }
+  g += `<text x="${W-m.r}" y="${H-4}" text-anchor="end" fill="#5e7590" font-size="11">betalende deltakere</text>`;
+  const path = k => pts.map((p,i)=>`${i?'L':'M'}${x(p.n).toFixed(1)},${y(p[k]).toFixed(1)}`).join('');
+  // current marker
+  if(cur.n>=50 && cur.n<=xMax){
+    g += `<line x1="${x(cur.n)}" x2="${x(cur.n)}" y1="${m.t}" y2="${H-m.b}" stroke="#29496f" stroke-dasharray="3 4"/>`;
+    g += `<text x="${x(cur.n)+5}" y="${m.t+11}" fill="#8fa3b8" font-size="11">Valgt: ${cur.n}</text>`;
+  }
+  g += `<path d="${path('urc')}" fill="none" stroke="var(--s-urc)" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/>`;
+  g += `<path d="${path('club')}" fill="none" stroke="var(--s-club)" stroke-width="2" stroke-linejoin="round"/>`;
+  // break-even
+  if(be!==null && be>=50 && be<=xMax){
+    g += `<circle cx="${x(be)}" cy="${y(0)}" r="5" fill="var(--s-club)" stroke="#0f2035" stroke-width="2"/>`;
+    g += `<text x="${x(be)+8}" y="${y(0)+16}" fill="#e8f0e8" font-size="11">Break-even ${be}</text>`;
+  }
+  // direct end labels
+  const last = pts[pts.length-1];
+  let yc = y(last.club), yu = y(last.urc);
+  if(Math.abs(yc-yu)<14){ if(yc<yu){ yc-=7; yu+=7;} else { yc+=7; yu-=7; } }
+  g += `<text x="${W-m.r+8}" y="${yc+4}" fill="#e8f0e8" font-size="11.5">Klubben</text>`;
+  g += `<text x="${W-m.r+8}" y="${yu+4}" fill="#e8f0e8" font-size="11.5">URC-faktura</text>`;
+  // hover layer
+  g += `<line id="cross" x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" stroke="#8fa3b8" stroke-width="1" opacity="0"/>`;
+  g += `<circle id="dotC" r="4.5" fill="var(--s-club)" stroke="#0f2035" stroke-width="2" opacity="0"/>`;
+  g += `<circle id="dotU" r="4.5" fill="var(--s-urc)" stroke="#0f2035" stroke-width="2" opacity="0"/>`;
+  g += `<rect id="hit" x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent" tabindex="0" aria-label="Utforsk grafen med piltaster"/>`;
+  svg.innerHTML = g;
+  const hit = svg.getElementById('hit');
+  hit.addEventListener('pointermove', onHover);
+  hit.addEventListener('pointerleave', hideTip);
+  hit.addEventListener('blur', hideTip);
+  hit.addEventListener('keydown', e=>{
+    if(!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+    e.preventDefault();
+    chartData.ki = Math.max(0, Math.min(pts.length-1, (chartData.ki ?? pts.findIndex(p=>p.n>=cur.n)) + (e.key==='ArrowRight'?1:-1)));
+    showAt(chartData.ki);
+  });
+  // sensitivity table
+  const rows = [100,150,200,250,300,350,400,450,500,550,600].map(n=>{ const c=calc(S,n); return `<tr><td class="num">${n}</td><td class="r num ${c.over>=0?'':'neg'}">${kr(c.over)}</td><td class="r num">${kr(c.faktura)}</td><td class="r num">${c.timer? kr(c.over/c.timer):'0'}</td></tr>`; }).join('');
+  document.getElementById('sensTab').innerHTML = `<tr><th>Betalende</th><th class="r">Klubbens overskudd</th><th class="r">URC-faktura</th><th class="r">Per dugnadstime</th></tr>` + rows;
+}
+function onHover(e){
+  const svg = document.getElementById('svg');
+  const r = svg.getBoundingClientRect();
+  const px = (e.clientX - r.left) * (chartData.W / r.width);
+  const {pts, x} = chartData;
+  let best=0, bd=1e9; pts.forEach((p,i)=>{ const d=Math.abs(x(p.n)-px); if(d<bd){bd=d;best=i;} });
+  showAt(best);
+}
+function showAt(i){
+  const {pts, x, y, W} = chartData; const p = pts[i];
+  const svg = document.getElementById('svg');
+  const cx = x(p.n);
+  const cr = svg.getElementById('cross'); cr.setAttribute('x1',cx); cr.setAttribute('x2',cx); cr.setAttribute('opacity',.6);
+  const dc = svg.getElementById('dotC'); dc.setAttribute('cx',cx); dc.setAttribute('cy',y(p.club)); dc.setAttribute('opacity',1);
+  const du = svg.getElementById('dotU'); du.setAttribute('cx',cx); du.setAttribute('cy',y(p.urc)); du.setAttribute('opacity',1);
+  const tip = document.getElementById('tip');
+  tip.innerHTML = '';
+  const hd = document.createElement('div'); hd.className='h'; hd.textContent = p.n + ' betalende'; tip.appendChild(hd);
+  [['Klubbens overskudd', p.club, 'var(--s-club)'], ['Faktura fra URC', p.urc, 'var(--s-urc)']].forEach(([l,v,c])=>{
+    const d=document.createElement('div'); d.className='row';
+    const s=document.createElement('span'); const ic=document.createElement('i'); ic.style.setProperty('--c',c); s.appendChild(ic); s.appendChild(document.createTextNode(l));
+    const b=document.createElement('b'); b.textContent = krk(v);
+    d.appendChild(s); d.appendChild(b); tip.appendChild(d);
+  });
+  const rect = svg.getBoundingClientRect(); const scale = rect.width / W;
+  let left = cx*scale + 14; if(left + 190 > rect.width) left = cx*scale - 190;
+  tip.style.left = left + 'px'; tip.style.top = (chartData.m.t*scale + 8) + 'px'; tip.style.opacity = 1;
+}
+function hideTip(){
+  document.getElementById('tip').style.opacity = 0;
+  const svg = document.getElementById('svg');
+  ['cross','dotC','dotU'].forEach(id=>{ const el=svg.getElementById(id); if(el) el.setAttribute('opacity',0); });
+}
+let rz; new ResizeObserver(()=>{ clearTimeout(rz); rz=setTimeout(()=>{ const c=calc(S); drawChart(c, breakEven(S)); },60); }).observe(document.getElementById('chart'));
+
+bindInputs();
+{ const pk = Object.keys(PRESETS).find(k => PRESETS[k].label === presetLabel); if (pk) document.querySelector('[data-preset='+pk+']').classList.add('on'); }
+render(true);
+</script>
+<script>Portal.bootTool('arrangementskalkulator');</script>
+</body>
+</html>
