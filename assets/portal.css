@@ -1,0 +1,82 @@
+/* URC Arrangementsportal · felles stil for portalsidene */
+:root{
+  color-scheme:dark;
+  --bg:#0b1626; --bg-2:#081221; --panel:#0f2035; --panel-2:#13283f; --line:#1e3a5f; --line-2:#29496f;
+  --fg:#e8f0e8; --muted:#8fa3b8; --dim:#5e7590;
+  --sage:#a8c5a0; --sage-2:#c3d9bd; --gold:#f5a623; --bad:#ff5a5f; --good:#5fd39a;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --gut:max(16px,env(safe-area-inset-left,0px));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 var(--f-body);min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--sage)}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.02;text-wrap:balance}
+h1{font-size:clamp(38px,6.4vw,76px);text-transform:uppercase;letter-spacing:.005em}
+h2{font-size:clamp(26px,3.4vw,38px);text-transform:uppercase;letter-spacing:.01em}
+h3{font-size:22px;text-transform:uppercase;letter-spacing:.03em}
+p{margin:0}
+.eyebrow{font-family:var(--f-display);font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage)}
+.muted{color:var(--muted)} .dim{color:var(--dim)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 var(--gut)}
+main{flex:1}
+
+/* ---- Topp ---- */
+.top{position:sticky;top:0;z-index:20;background:rgba(8,18,33,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .container{display:flex;align-items:center;gap:16px;min-height:60px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--fg);text-decoration:none;min-width:0}
+.brand .urc-logo{height:38px;width:38px;flex:none;display:block}
+.brand span{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand i{width:1px;height:20px;background:var(--line-2)}
+.top .sp{flex:1}
+.top .who{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:32vw}
+@media (max-width:560px){.top .who{display:none}.brand span{font-size:13px;letter-spacing:.1em}}
+
+/* ---- Knapper ---- */
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-2);background:transparent;color:var(--fg);
+  border-radius:8px;padding:10px 18px;font:600 15px/1.2 var(--f-body);text-decoration:none;cursor:pointer;transition:border-color .15s,background .15s,color .15s;white-space:nowrap}
+.btn:hover{border-color:var(--sage)}
+.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.btn.primary{background:var(--sage);border-color:var(--sage);color:#0b1626}
+.btn.primary:hover{background:var(--sage-2);border-color:var(--sage-2)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:6px}
+.btn.danger:hover{border-color:var(--bad);color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---- Skjema ---- */
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);min-width:0}
+input,select{width:100%;background:var(--bg-2);color:var(--fg);border:1px solid var(--line-2);border-radius:8px;padding:11px 12px;font:400 15px var(--f-body)}
+input::placeholder{color:var(--dim)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}
+
+/* ---- Kort ---- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:99px;padding:3px 10px;font:600 11px/1.4 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.chip.sage{color:var(--sage);border-color:#3c5a49}
+.chip.gold{color:var(--gold);border-color:#6a4d17}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.chip.plain::before{display:none}
+
+/* ---- Bunn ---- */
+.foot{border-top:1px solid var(--line);margin-top:72px;padding:28px 0 36px;color:var(--dim);font-size:13px}
+.foot .container{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.foot a{color:var(--muted);text-decoration:none}
+.foot a:hover{color:var(--fg)}
+
+/* ---- Verktøyikoner ---- */
+.ticon{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:#122a44;border:1px solid var(--line-2);color:var(--sage);flex:none}
+.ticon svg{width:24px;height:24px}
+
+/* ---- Tilbakemelding ---- */
+.flash{border-radius:8px;padding:10px 14px;font-size:14px;background:#13283f;border:1px solid var(--line-2)}
+.flash.err{background:#2b1418;border-color:#6b2a31;color:#ffb3b6}
+.flash.ok{background:#132b22;border-color:#2f5b45;color:#bfe8cf}
+
+.pdemo{padding:8px var(--gut);background:#13283f;border-bottom:1px solid var(--line-2);color:#c9d6e3;font-size:13px}
+.pdemo select{width:auto;margin-left:6px;padding:2px 6px;font-size:13px;border-radius:4px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
