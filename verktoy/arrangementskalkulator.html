@@ -112,24 +112,102 @@ body.show-intern .intern{display:block}
   input[type=range]{display:none}
   .tip{display:none}
 }
+/* --- arrangørmodell --- */
+body[data-modell="klubb"] [data-m="urc"], body[data-modell="urc"] [data-m="klubb"]{display:none!important}
+.modelbar{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;padding:14px}
+.mb-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mb-label{font-family:var(--f-display);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.05em;color:var(--fg);margin-right:6px}
+.mb-label.sub{color:var(--muted);font-size:15px}
+.btn.model{font-size:14px;padding:10px 16px}
+.btn.model.on{background:var(--gold);border-color:var(--gold);color:#0b1626}
+.ibtn{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);background:var(--panel-2);color:var(--sage);font:700 13px/1 var(--f-body);cursor:pointer;display:inline-grid;place-items:center;padding:0;margin-right:10px}
+.ibtn:hover{border-color:var(--sage)}
+.ibtn[aria-expanded="true"]{background:var(--sage);border-color:var(--sage);color:#0b1626}
+.infopanel{flex-basis:100%;border-top:1px solid var(--line);padding-top:14px}
+.infopanel[hidden]{display:none}
+.infopanel h3{margin-bottom:6px}
+.infopanel .lead{margin:0 0 12px;max-width:80ch;color:var(--fg)}
+.infopanel .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.infopanel .cols{grid-template-columns:1fr}}
+.infopanel h4{margin:0;font:700 13px/1.2 var(--f-body);letter-spacing:.08em;text-transform:uppercase}
+.infopanel .pro h4{color:var(--sage)} .infopanel .con h4{color:var(--gold)}
+.infopanel ul{margin:6px 0 0;padding-left:18px} .infopanel li{margin:4px 0}
+.infopanel .fit{margin:12px 0 0;color:var(--muted);font-size:13px}
+tr.cur td{background:rgba(245,166,35,.08)}
+.tnote{font-size:12px;color:var(--muted);border-left:2px solid var(--sage);padding:6px 10px;background:rgba(168,197,160,.06);border-radius:0 4px 4px 0;margin:12px 0 0}
+@media print{ .ibtn,.infopanel{display:none!important} }
 </style>
 </head>
-<body>
+<body data-modell="klubb">
 <div class="wrap">
 
 <header>
   <div>
     <div class="eyebrow" id="toolEyebrow">Løpernes Mester</div>
     <h1>Arrangements&shy;kalkulator</h1>
-    <p class="lede">Hva klubben tjener, hva URC leverer, og hva arrangementet krever av dugnad. Alle tall kan endres. Beløp er eks. MVA der ikke annet står.</p>
+    <p class="lede">Hva klubben tjener i de to arrangørmodellene, hva URC leverer, og hva arrangementet krever av dugnad. Alle tall kan endres. Beløp er eks. MVA der ikke annet står.</p>
   </div>
   <div class="toolbar">
-    <button class="btn" data-preset="ordinaer">Ordinær pris</button>
-    <button class="btn" data-preset="pilot">Pilotpris 2027</button>
     <button class="btn" id="tgIntern" aria-pressed="false">Vis URC-intern</button>
     <button class="btn" onclick="window.print()">Skriv ut / PDF</button>
   </div>
 </header>
+
+<section class="card modelbar" aria-label="Arrangørmodell og prisnivå">
+  <div class="mb-group" role="group" aria-label="Velg arrangørmodell">
+    <span class="mb-label">Velg arrangørmodell</span>
+    <button class="btn model" data-modell="klubb" aria-pressed="true">Klubb/lag</button>
+    <button class="ibtn" data-info="klubb" aria-expanded="false" aria-controls="infoKlubb" aria-label="Om Klubb/lag-modellen">i</button>
+    <button class="btn model" data-modell="urc" aria-pressed="false">URC</button>
+    <button class="ibtn" data-info="urc" aria-expanded="false" aria-controls="infoUrc" aria-label="Om URC-modellen">i</button>
+  </div>
+  <div class="mb-group" role="group" aria-label="Prisnivå">
+    <span class="mb-label sub">Prisnivå</span>
+    <button class="btn" data-preset="ordinaer">Ordinær pris</button>
+    <button class="btn" data-preset="pilot">Pilotpris 2027</button>
+  </div>
+
+  <div class="infopanel" id="infoKlubb" hidden>
+    <h3>Klubb/lag: Klubben er arrangør</h3>
+    <p class="lead">Klubben er den faktiske arrangøren av Løpernes Mester. URC leverer format, merkevare, påmelding, tidtaking og resultater mot lisens per deltaker og en fast tjenestepris. Alt overskudd etter kostnadene går til klubben.</p>
+    <div class="cols">
+      <div class="pro"><h4>Fordeler</h4><ul>
+        <li>Klubben er arrangør og eier arrangementet lokalt</li>
+        <li>Klubben får hele oppsiden ved stor deltakelse. Hver deltaker over break-even går rett i klubbkassa</li>
+        <li>Faste og kjente priser fra URC, avtalt på forhånd</li>
+        <li>Klubben styrer egne kostnader og velger selv leverandører av premier og utstyr</li>
+      </ul></div>
+      <div class="con"><h4>Ulemper</h4><ul>
+        <li>Klubben bærer den økonomiske risikoen hvis deltakelsen blir lav</li>
+        <li>Lisensen har en minimumssum, og tjenesteprisen er fast uansett deltakertall</li>
+        <li>Klubben har ansvaret for budsjett, innkjøp og forsikring</li>
+        <li>Fakturaen fra URC kan bli MVA-pliktig. Avklares før avtale</li>
+      </ul></div>
+    </div>
+    <p class="fit"><b>Passer for:</b> Etablerte klubber med erfaring fra store arrangementer, og steder der det er grunn til å vente høy deltakelse.</p>
+  </div>
+
+  <div class="infopanel" id="infoUrc" hidden>
+    <h3>URC: URC tar den økonomiske risikoen</h3>
+    <p class="lead">URC er økonomisk ansvarlig for arrangementet. URC tar imot startkontingenten og betaler alle kostnader, inkludert premier, medaljer og deltakerpakker. Klubben gjennomfører arrangementet på dugnad og får en fast sum per deltaker, pluss en andel av overskuddet som øker med deltakertallet.</p>
+    <div class="cols">
+      <div class="pro"><h4>Fordeler</h4><ul>
+        <li>Ingen økonomisk risiko for klubben. Den faste summen utbetales uansett resultat</li>
+        <li>Enkelt å forstå og budsjettere med</li>
+        <li>Klubben får del i oppsiden, med høyere andel jo flere som deltar</li>
+        <li>URC tar seg av budsjett, innkjøp og bestillinger</li>
+        <li>Hele regnestykket er åpent: Alle kostnader vises, og URCs leveranser har faste priser avtalt på forhånd</li>
+      </ul></div>
+      <div class="con"><h4>Ulemper</h4><ul>
+        <li>Klubben får normalt mindre enn i Klubb/lag-modellen ved høy deltakelse</li>
+        <li>Klubben har mindre kontroll over budsjett, innkjøp og leverandører</li>
+        <li>Overskuddsandelen påvirkes av kostnader klubben ikke styrer selv</li>
+        <li>Klubben gjennomfører arrangementet, men er ikke økonomisk arrangør</li>
+      </ul></div>
+    </div>
+    <p class="fit"><b>Passer for:</b> Klubber som vil prøve Løpernes Mester uten risiko, og nye steder der deltakelsen er usikker.</p>
+  </div>
+</section>
 
 <div class="main">
 <!-- ============ INPUT ============ -->
@@ -152,33 +230,55 @@ body.show-intern .intern{display:block}
         <label class="f">Fribilletter fra URC<input type="number" min="0" data-k="fri"><span class="hint">Normalt maks 50. Påvirker puljer, ikke klubbens økonomi</span></label>
         <label class="f">Startkontingent (kr)<input type="number" min="0" step="10" data-k="kontingent"><span class="hint">Unntatt MVA</span></label>
         <label class="f">Lokale sponsorer (kr)<input type="number" min="0" step="1000" data-k="lokaleSponsorer"><span class="hint">Går direkte til klubben</span></label>
-        <label class="f">Kiosk og annet salg, netto (kr)<input type="number" min="0" step="1000" data-k="andreInnt"></label>
+        <label class="f">Kiosk og annet salg, netto (kr)<input type="number" min="0" step="1000" data-k="andreInnt"><span class="hint">Går direkte til klubben</span></label>
       </div>
     </div>
   </section>
 
-  <section class="card">
-    <div class="card-h"><h2>URC-leveransen</h2><p>Lisens per deltaker + fast tjenestepris</p></div>
+  <section class="card" data-m="urc">
+    <div class="card-h"><h2>Klubbens godtgjørelse</h2><p>Fast sum per deltaker + andel av overskuddet</p></div>
     <div class="card-b">
-      <h3>Lisens</h3>
-      <div class="grid" style="margin:8px 0 6px">
-        <label class="f">Pris per betalende (kr)<input type="number" min="0" step="5" data-k="lisensPris"></label>
-        <label class="f">Minimum antall lisenser<input type="number" min="0" step="10" data-k="minLis"><span class="hint" id="minLisHint"></span></label>
-        <label class="f">Rabatt på lisens (%)<input type="number" min="0" max="100" step="5" data-k="rabLis"></label>
+      <div class="grid" style="margin-bottom:14px">
+        <label class="f">Fast sum per betalende (kr)<input type="number" min="0" step="10" data-g="krPerDelt"></label>
+        <label class="f">Minimum til klubben (kr)<input type="number" min="0" step="500" data-g="grunnsum"><span class="hint" id="grunnHint"></span></label>
       </div>
-      <p class="muted" style="margin:0 0 14px;font-size:12.5px">Dekker merkevaren, formatet, poengberegning, Stat Card, påmelding og betalingshåndtering, resultatplattform, startnummer med URC- og sponsorprofil, markedsføring i URC-kanalene og eksponering for nasjonale sponsorer.</p>
+      <h3>Andel av overskuddet</h3>
+      <div class="scroll"><table class="edit" style="margin-top:6px">
+        <thead><tr><th>Betalende deltakere</th><th class="r">Andel til klubben</th><th></th></tr></thead>
+        <tbody id="trinnRows"></tbody>
+      </table></div>
+      <button class="btn small addrow" data-add="trinn" style="margin-top:8px">+ Legg til trinn</button>
+      <p class="tnote">Andelen gjelder hele overskuddet, etter alle kostnadene og den faste summen til klubben. Kostnadene står åpent i kalkulatoren. URCs egne leveranser regnes til faste priser som avtales før arrangementet, ikke til URCs innkjøpspris. Går arrangementet med underskudd, dekker URC det, og klubben får fortsatt den faste summen.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>URC-leveransen</h2><p data-m="klubb">Lisens per deltaker + fast tjenestepris</p><p data-m="urc">Faste priser i arrangementets regnskap</p></div>
+    <div class="card-b">
+      <div data-m="klubb">
+        <h3>Lisens</h3>
+        <div class="grid" style="margin:8px 0 6px">
+          <label class="f">Pris per betalende (kr)<input type="number" min="0" step="5" data-k="lisensPris"></label>
+          <label class="f">Minimum antall lisenser<input type="number" min="0" step="10" data-k="minLis"><span class="hint" id="minLisHint"></span></label>
+          <label class="f">Rabatt på lisens (%)<input type="number" min="0" max="100" step="5" data-k="rabLis"></label>
+        </div>
+        <p class="muted" style="margin:0 0 14px;font-size:12.5px">Dekker merkevaren, formatet, poengberegning, Stat Card, påmelding og betalingshåndtering, resultatplattform, startnummer med URC- og sponsorprofil, markedsføring i URC-kanalene og eksponering for nasjonale sponsorer.</p>
+      </div>
 
       <h3>Påmelding og betaling</h3>
       <div class="grid" style="margin:8px 0 14px">
         <label class="f">Betalingsgebyr (% av kontingent)<input type="number" min="0" step="0.1" data-k="gebyrPst"><span class="hint">Stripe/Vipps, grovt anslag. Trekkes i oppgjøret</span></label>
+        <label class="f" data-m="urc">Startnummer med sponsorprofil (kr per betalende)<input type="number" min="0" step="1" data-g="startnrPris"><span class="hint">Fast pris</span></label>
       </div>
 
-      <h3>Tilvalg for klubben</h3>
+      <h3 data-m="klubb">Tilvalg for klubben</h3>
+      <h3 data-m="urc">Medaljer og deltakerpakker</h3>
       <div class="scroll"><table class="edit" style="margin-top:6px">
-        <thead><tr><th>Valgt</th><th>Tilvalg</th><th class="r">URC-pris per betalende</th><th class="r">Klubbens alternativ per deltaker</th></tr></thead>
+        <thead id="opsHead"></thead>
         <tbody id="opsRows"></tbody>
       </table></div>
-      <p class="dim" style="font-size:12px;margin:8px 0 14px">Ikke valgt: klubben kjøper selv til «alternativ»-prisen, som legges i klubbens kostnader. Tilvalg får ikke lisens- eller tjenesterabatt.</p>
+      <p class="dim" style="font-size:12px;margin:8px 0 14px" data-m="klubb">Ikke valgt: klubben kjøper selv til «alternativ»-prisen, som legges i klubbens kostnader. Tilvalg får ikke lisens- eller tjenesterabatt.</p>
+      <p class="dim" style="font-size:12px;margin:8px 0 14px" data-m="urc">URC kjøper inn og leverer. Inkluderte poster regnes per betalende til fast pris. Fribilletter belastes ikke arrangementet.</p>
 
       <h3>Tjeneste på arrangementsdagen</h3>
       <div class="scroll"><table class="edit" style="margin-top:6px">
@@ -190,17 +290,17 @@ body.show-intern .intern{display:block}
       </table></div>
       <button class="btn small addrow" data-add="tjeneste" style="margin-top:8px">+ Legg til post</button>
 
-      <h3 style="margin-top:16px">Rabatt og MVA</h3>
+      <h3 style="margin-top:16px"><span data-m="klubb">Rabatt og MVA</span><span data-m="urc">Rabatt</span></h3>
       <div class="grid" style="margin-top:8px">
         <label class="f">Rabatt på tjeneste (%)<input type="number" min="0" max="100" step="5" data-k="rabTj"></label>
         <label class="f">Annen rabatt (kr)<input type="number" min="0" step="1000" data-k="rabKr"><span class="hint">F.eks. kort reise</span></label>
       </div>
-      <label class="check" style="margin-top:12px"><input type="checkbox" data-k="mva"><span>Legg 25 % MVA på URC-fakturaen (lisens, tjeneste og tilvalg)<br><span class="dim" style="font-size:12px">Gjelder ikke startkontingenten, som er unntatt. Fakturaen fra URC AS er etter alt å dømme MVA-pliktig, og blir en kostnad for klubben hvis den ikke kan trekke fra. Avklares med regnskapsfører.</span></span></label>
+      <label class="check" style="margin-top:12px" data-m="klubb"><input type="checkbox" data-k="mva"><span>Legg 25 % MVA på URC-fakturaen (lisens, tjeneste og tilvalg)<br><span class="dim" style="font-size:12px">Gjelder ikke startkontingenten, som er unntatt. Fakturaen fra URC AS er etter alt å dømme MVA-pliktig, og blir en kostnad for klubben hvis den ikke kan trekke fra. Avklares med regnskapsfører.</span></span></label>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-h"><h2>Klubbens arrangementskostnader</h2><p>Grovanslag fra budsjettet 23.10</p></div>
+    <div class="card-h"><h2><span data-m="klubb">Klubbens arrangementskostnader</span><span data-m="urc">Arrangementskostnader</span></h2><p data-m="klubb">Betales av klubben</p><p data-m="urc">Betales av URC</p></div>
     <div class="card-b">
       <div class="scroll"><table class="edit">
         <thead><tr><th>Post</th><th>Grunnlag</th><th class="r">Sats (kr)</th><th class="r">Sum</th><th></th></tr></thead>
@@ -243,21 +343,21 @@ body.show-intern .intern{display:block}
     <div class="card-h"><h2 id="resTitle">Resultat for klubben</h2><span class="badge gold" id="prisBadge">Ordinær pris</span></div>
     <div class="card-b">
       <div class="kpis">
-        <div class="kpi"><span>Klubbens overskudd</span><b class="num" id="kOver"></b><small id="kOverS"></small></div>
-        <div class="kpi"><span>Break-even</span><b class="num" id="kBe"></b><small>betalende deltakere</small></div>
-        <div class="kpi"><span>Per dugnadstime</span><b class="num" id="kTime"></b><small id="kTimeS"></small></div>
-        <div class="kpi"><span>Faktura fra URC</span><b class="num" id="kFakt"></b><small id="kFaktS"></small></div>
+        <div class="kpi"><span id="l1"></span><b class="num" id="v1"></b><small id="s1"></small></div>
+        <div class="kpi"><span id="l2"></span><b class="num" id="v2"></b><small id="s2"></small></div>
+        <div class="kpi"><span id="l3"></span><b class="num" id="v3"></b><small id="s3"></small></div>
+        <div class="kpi"><span id="l4"></span><b class="num" id="v4"></b><small id="s4"></small></div>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-h"><h2>Klubbens regnskap</h2><p id="regnLede"></p></div>
+    <div class="card-h"><h2><span data-m="klubb">Klubbens regnskap</span><span data-m="urc">Arrangementets regnskap</span></h2><p id="regnLede"></p></div>
     <div class="card-b"><table id="regn"></table></div>
   </section>
 
   <section class="card">
-    <div class="card-h"><h2>Faktura fra URC AS</h2><p>Trekkes i oppgjøret</p></div>
+    <div class="card-h"><h2><span data-m="klubb">Faktura fra URC AS</span><span data-m="urc">URC-leveranse til faste priser</span></h2><p data-m="klubb">Trekkes i oppgjøret</p><p data-m="urc">Inngår i arrangementets regnskap</p></div>
     <div class="card-b"><table id="fakt"></table></div>
   </section>
 
@@ -269,13 +369,13 @@ body.show-intern .intern{display:block}
   </section>
 
   <section class="card">
-    <div class="card-h"><h2>Overskudd etter antall deltakere</h2><p>Øvrige tall holdes fast</p></div>
+    <div class="card-h"><h2>Klubbens resultat i de to modellene</h2><p id="chartLede">Etter antall betalende, øvrige tall holdes fast</p></div>
     <div class="card-b">
       <div class="legend">
-        <span><i style="--c:var(--s-club)"></i>Klubbens overskudd</span>
-        <span><i class="dash" style="--c:var(--s-urc)"></i>Faktura fra URC</span>
+        <span><i style="--c:var(--s-club)"></i>Klubb/lag</span>
+        <span><i class="dash" style="--c:var(--s-urc)"></i>URC</span>
       </div>
-      <div id="chart"><svg id="svg" role="img" aria-label="Klubbens overskudd og URC-faktura etter antall betalende deltakere"></svg><div class="tip" id="tip"></div></div>
+      <div id="chart"><svg id="svg" role="img" aria-label="Klubbens resultat i Klubb/lag-modellen og URC-modellen etter antall betalende deltakere"></svg><div class="tip" id="tip"></div></div>
       <details><summary>Vis som tabell</summary><div class="scroll"><table id="sensTab"></table></div></details>
     </div>
   </section>
@@ -292,11 +392,11 @@ body.show-intern .intern{display:block}
         <label class="f">Startnummer, innkjøp per stk (kr)<input type="number" min="0" step="1" data-ik="startnrKost"><span class="hint">Alle deltakere, inkl. fribilletter</span></label>
       </div>
       <div class="scroll"><table class="edit" style="margin-bottom:12px">
-        <thead><tr><th>Tilvalg</th><th class="r">URC innkjøp per stk</th></tr></thead>
+        <thead><tr><th>Medalje / pakke</th><th class="r">URC innkjøp per stk</th></tr></thead>
         <tbody id="opsInnkjop"></tbody>
       </table></div>
       <table id="urcTab"></table>
-      <p class="dim" style="font-size:12px;margin:10px 0 0">Bidrag før lønn. Personellkostnaden ligger i lønnsbudsjettet til URC AS.</p>
+      <p class="dim" style="font-size:12px;margin:10px 0 0">Bidrag før lønn, i valgt modell. Personellkostnaden ligger i lønnsbudsjettet til URC AS. Mulig ikke-fradragsberettiget inngående MVA er ikke regnet med.</p>
     </div>
   </section>
 
@@ -315,11 +415,14 @@ body.show-intern .intern{display:block}
         <li>Speaker (egen eller innleid)</li>
         <li>Sanitet og førstehjelp</li>
         <li>Tillatelser fra grunneier, kommune og arena</li>
-        <li>Ordinære premier (URC-medaljer kan kjøpes som tilvalg)</li>
-        <li>Forsikring, parkering og kiosk</li>
+        <li data-m="klubb">Budsjett, innkjøp og betaling av arrangementskostnadene</li>
+        <li data-m="klubb">Ordinære premier (URC-medaljer kan kjøpes som tilvalg)</li>
+        <li data-m="klubb">Forsikring, parkering og kiosk</li>
+        <li data-m="urc">Parkering og kiosk</li>
         <li>Lokale sponsorer og lokal markedsføring</li>
       </ul>
-      <p class="muted" style="margin:10px 0 0;font-size:12.5px"><b>Inntekter:</b> Startkontingent etter URC-faktura og gebyr, lokale sponsorer, kiosk og salg.</p>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px" data-m="klubb"><b>Inntekter:</b> Startkontingent etter URC-faktura og gebyr, lokale sponsorer, kiosk og salg.</p>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px" data-m="urc"><b>Inntekter:</b> Fast sum per deltaker, andel av overskuddet, lokale sponsorer, kiosk og salg.</p>
     </div>
     <div>
       <h3>URC AS</h3>
@@ -332,10 +435,13 @@ body.show-intern .intern{display:block}
         <li>Markedsføring i URC-kanalene</li>
         <li>Nasjonale sponsorer, inviterte profiler og fribilletter</li>
         <li>Pengepremier og uttrekkspremier, finansiert av URCs sponsorer</li>
-        <li>Tilvalg: URC-medaljer og deltakerpakker</li>
+        <li data-m="klubb">Tilvalg: URC-medaljer og deltakerpakker</li>
+        <li data-m="urc">Budsjett, innkjøp og betaling av alle arrangementskostnader</li>
+        <li data-m="urc">Premier, medaljer, deltakerpakker og arrangementsforsikring</li>
         <li>Etterarbeid på urcofficial.com: bilder, video og resultater</li>
       </ul>
-      <p class="muted" style="margin:10px 0 0;font-size:12.5px"><b>Inntekter:</b> Lisens, tjenestepris og nasjonale sponsorer.</p>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px" data-m="klubb"><b>Inntekter:</b> Lisens, tjenestepris og nasjonale sponsorer.</p>
+      <p class="muted" style="margin:10px 0 0;font-size:12.5px" data-m="urc"><b>Inntekter:</b> Startkontingent etter kostnader og klubbens andel, og nasjonale sponsorer.</p>
     </div>
   </div>
 </section>
@@ -352,11 +458,14 @@ const tt = v => (Math.round(v*10)/10).toString().replace('.',',');
 
 const BASE = {
   klubb:'', sted:'', dato:'',
+  modell:'klubb',
   betalende:500, fri:50, kontingent:500, lokaleSponsorer:0, andreInnt:0,
   lisensPris:100, minLis:200, rabLis:0, rabTj:0, rabKr:0, mva:false,
+  godt:{krPerDelt:100, grunnsum:3000, startnrPris:20,
+    trinn:[{fra:151, pst:10},{fra:251, pst:15},{fra:351, pst:25}]},
   opsjoner:[
-    {navn:'URC-medalje til alle betalende', valgt:true, pris:40, alternativ:45},
-    {navn:'Deltakerpakke med sponsorprofil', valgt:false, pris:50, alternativ:0}
+    {navn:'URC-medalje til alle betalende', valgt:true, inklUrc:true, pris:40, alternativ:45},
+    {navn:'Deltakerpakke med sponsorprofil', valgt:false, inklUrc:true, pris:50, alternativ:0}
   ],
   tjeneste:[
     {navn:'To ressurser, rigg og drift', belop:25000},
@@ -400,37 +509,32 @@ const PRESETS = {
   ordinaer:{label:'Ordinær pris', set:{rabLis:0, rabTj:0, rabKr:0, tj:{'Reise og opphold':5000}}},
   pilot:{label:'Pilotpris 2027', set:{rabLis:25, rabTj:25, rabKr:0, tj:{'Reise og opphold':0}}}
 };
+const MODELL_NAVN = {klubb:'Klubb/lag', urc:'URC'};
 const P0 = window.PORTAL || null;
 let S = JSON.parse(JSON.stringify(BASE));
 if (P0 && P0.state) S = Object.assign(S, JSON.parse(JSON.stringify(P0.state)));
 else if (P0) { const e = P0.event; S.sted = e.venue || ''; if (e.event_date) { const [y,m,d] = e.event_date.split('-'); S.dato = d+'.'+m+'.'+y; } }
+if (!S.godt || !Array.isArray(S.godt.trinn)) S.godt = JSON.parse(JSON.stringify(BASE.godt));
+S.godt = Object.assign(JSON.parse(JSON.stringify(BASE.godt)), S.godt);
+if (!MODELL_NAVN[S.modell]) S.modell = 'klubb';
 let I = Object.assign(JSON.parse(JSON.stringify(INTERN0)), (P0 && P0.internal) || {});
 const SHOW_INTERN = !P0 || P0.isAdmin;
 if (!SHOW_INTERN) { document.querySelectorAll('.intern').forEach(el => el.remove()); const t = document.getElementById('tgIntern'); if (t) t.remove(); }
 if (P0) document.getElementById('toolEyebrow').textContent = P0.event.name + (P0.event.venue ? ' · ' + P0.event.venue : '');
 let presetLabel = S.prisLabel || 'Ordinær pris';
 
+const inkl = o => o.inklUrc !== false;
+function sortertTrinn(s){ return s.godt.trinn.map((t,i)=>({fra:+t.fra||0, pst:+t.pst||0, i})).sort((a,b)=>a.fra-b.fra); }
+function andelFor(s, n){ let p = 0; sortertTrinn(s).forEach(t=>{ if(n >= t.fra) p = t.pst; }); return p; }
+
 function calc(s, nOver){
   const n = nOver ?? s.betalende;
   const delt = n + s.fri;
-  const lisAnt = Math.max(n, s.minLis);
-  const lisBr = lisAnt * s.lisensPris;
-  const lisRab = lisBr * s.rabLis/100;
-  const tjBr = s.tjeneste.reduce((a,r)=>a+(+r.belop||0),0);
-  const tjRab = tjBr * s.rabTj/100;
-  const rabKr = Math.min(s.rabKr, lisBr-lisRab+tjBr-tjRab);
-  const ops = s.opsjoner.map((o,i)=>({navn:o.navn, valgt:!!o.valgt,
-    urc: o.valgt ? (+o.pris||0)*n : 0,
-    egen: o.valgt ? 0 : (+o.alternativ||0)*n,
-    innkjop: o.valgt ? (+(I.innkjop||[])[i]||0)*(n+s.fri) : 0}));
-  const opsUrc = ops.reduce((a,o)=>a+o.urc,0);
-  const opsEgen = ops.reduce((a,o)=>a+o.egen,0);
-  const opsInnkjop = ops.reduce((a,o)=>a+o.innkjop,0);
-  const fEks = lisBr - lisRab + tjBr - tjRab - rabKr + opsUrc;
-  const mva = s.mva ? fEks*0.25 : 0;
-  const faktura = fEks + mva;
+  // ----- felles -----
   const kont = n * s.kontingent;
   const gebyr = kont * s.gebyrPst/100;
+  const tjBr = s.tjeneste.reduce((a,r)=>a+(+r.belop||0),0);
+  const tjRab = tjBr * s.rabTj/100;
   const puljer = Math.max(1, Math.ceil(delt / Math.max(1,s.puljeStr)));
   const varMin = (puljer-1)*s.puljeInt + s.tidPulje;
   const tEvent = varMin/60 + s.oppmote;
@@ -442,21 +546,64 @@ function calc(s, nOver){
     timer += a*t;
     return {t, sum:a*t};
   });
-  const persRigg = Math.max(0,...s.roller.filter(r=>r.type!=='event').map(r=>+r.antall||0));
   const kost = s.kost.map(k=>{
     const b = +k.belop||0;
     return k.type==='deltaker' ? b*delt : k.type==='funksjonaer' ? b*persDag : b;
   });
-  const kostSum = kost.reduce((a,b)=>a+b,0) + opsEgen;
+  const kostBase = kost.reduce((a,b)=>a+b,0);
+  const lokalt = s.lokaleSponsorer + s.andreInnt;
+
+  // ----- Klubb/lag -----
+  const lisAnt = Math.max(n, s.minLis);
+  const lisBr = lisAnt * s.lisensPris;
+  const lisRab = lisBr * s.rabLis/100;
+  const rabKr = Math.min(s.rabKr, lisBr-lisRab+tjBr-tjRab);
+  const ops = s.opsjoner.map((o,i)=>({navn:o.navn, valgt:!!o.valgt,
+    urc: o.valgt ? (+o.pris||0)*n : 0,
+    egen: o.valgt ? 0 : (+o.alternativ||0)*n,
+    innkjop: o.valgt ? (+(I.innkjop||[])[i]||0)*delt : 0}));
+  const opsUrc = ops.reduce((a,o)=>a+o.urc,0);
+  const opsEgen = ops.reduce((a,o)=>a+o.egen,0);
+  const opsInnkjop = ops.reduce((a,o)=>a+o.innkjop,0);
+  const fEks = lisBr - lisRab + tjBr - tjRab - rabKr + opsUrc;
+  const mva = s.mva ? fEks*0.25 : 0;
+  const faktura = fEks + mva;
+  const kostSum = kostBase + opsEgen;
   const ufor = kostSum * s.uforPst/100;
   const arr = kostSum + ufor;
-  const innt = kont + s.lokaleSponsorer + s.andreInnt;
+  const innt = kont + lokalt;
   const over = innt - gebyr - arr - faktura;
   const utbet = kont - gebyr - faktura;
   const startnr = I.startnrKost * delt;
-  const urc = fEks + I.nasjSponsor - I.honorar - I.backup - I.reiseFaktisk - I.pengepremier - startnr - opsInnkjop;
-  return {n, delt, lisAnt, lisBr, lisRab, tjBr, tjRab, rabKr, ops, opsUrc, opsEgen, opsInnkjop, startnr, fEks, mva, faktura, kont, gebyr,
-    puljer, varMin, tEvent, persDag, persRigg, timer, roller, kost, kostSum, ufor, arr, innt, over, utbet, urc};
+  const urcK = fEks + I.nasjSponsor - I.honorar - I.backup - I.reiseFaktisk - I.pengepremier - startnr - opsInnkjop;
+
+  // ----- URC -----
+  const g = s.godt;
+  const rabKrU = Math.min(s.rabKr, tjBr-tjRab);
+  const tjU = tjBr - tjRab - rabKrU;
+  const opsU = s.opsjoner.map((o,i)=>({navn:o.navn, inkl:inkl(o),
+    pris: inkl(o) ? (+o.pris||0)*n : 0,
+    innkjop: inkl(o) ? (+(I.innkjop||[])[i]||0)*delt : 0}));
+  const startnrU = (+g.startnrPris||0) * n;
+  const levU = tjU + startnrU + opsU.reduce((a,o)=>a+o.pris,0);
+  const uforU = kostBase * s.uforPst/100;
+  const arrU = kostBase + uforU;
+  const fastU = Math.max(+g.grunnsum||0, (+g.krPerDelt||0)*n);
+  const minimum = (+g.grunnsum||0) > (+g.krPerDelt||0)*n;
+  const O = kont - gebyr - arrU - levU - fastU;
+  const pstU = andelFor(s, n);
+  const andelU = O > 0 ? O*pstU/100 : 0;
+  const utbetU = fastU + andelU;
+  const klubbU = utbetU + lokalt;
+  const urcAndel = O - andelU;
+  const urcU = urcAndel + levU - I.reiseFaktisk - startnr - opsU.reduce((a,o)=>a+o.innkjop,0)
+             + I.nasjSponsor - I.honorar - I.backup - I.pengepremier;
+
+  const club = s.modell==='urc' ? klubbU : over;
+  return {n, delt, kont, gebyr, tjBr, tjRab, puljer, varMin, tEvent, persDag, timer, roller, kost, kostBase,
+    lisAnt, lisBr, lisRab, rabKr, ops, opsUrc, opsEgen, opsInnkjop, startnr, fEks, mva, faktura, kostSum, ufor, arr, innt, over, utbet, urcK,
+    rabKrU, tjU, opsU, startnrU, levU, uforU, arrU, fastU, minimum, O, pstU, andelU, utbetU, klubbU, urcAndel, urcU,
+    club, urc: s.modell==='urc' ? urcU : urcK};
 }
 function breakEven(s){
   for(let n=0;n<=3000;n+=1){ if(calc(s,n).over>=0) return n; }
@@ -469,7 +616,13 @@ function bindInputs(){
     const k = el.dataset.k;
     if(el.type==='checkbox') el.checked = !!S[k]; else el.value = S[k];
   });
+  document.querySelectorAll('[data-g]').forEach(el=>{ el.value = S.godt[el.dataset.g]; });
   document.querySelectorAll('[data-ik]').forEach(el=>{ el.value = I[el.dataset.ik]; });
+}
+function setModell(m){
+  S.modell = m;
+  document.body.dataset.modell = m;
+  document.querySelectorAll('[data-modell]').forEach(b=>{ const on = b.dataset.modell===m; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
 }
 document.addEventListener('input', e=>{
   const el = e.target;
@@ -478,6 +631,12 @@ document.addEventListener('input', e=>{
     S[k] = el.type==='checkbox' ? el.checked : el.type==='number'||el.type==='range' ? (parseFloat(el.value)||0) : el.value;
     if(k==='betalende') document.querySelectorAll('[data-k=betalende]').forEach(o=>{ if(o!==el) o.value=S.betalende; });
     markCustom(k);
+    render(false);
+  } else if(el.dataset.g){
+    S.godt[el.dataset.g] = parseFloat(el.value)||0;
+    render(false);
+  } else if(el.dataset.gl){
+    S.godt.trinn[+el.dataset.i][el.dataset.gl] = parseFloat(el.value)||0;
     render(false);
   } else if(el.dataset.ik){
     I[el.dataset.ik] = parseFloat(el.value)||0;
@@ -497,14 +656,25 @@ document.addEventListener('change', e=>{
   const el=e.target;
   if(el.dataset.k && el.type==='checkbox'){ S[el.dataset.k]=el.checked; render(false); }
   if(el.dataset.list && el.tagName==='SELECT'){ S[el.dataset.list][+el.dataset.i][el.dataset.f]=el.value; render(true); }
+  if(el.dataset.gl==='fra'){ render(true); }
 });
 document.addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.del==='trinn'){ S.godt.trinn.splice(+b.dataset.i,1); render(true); return; }
   if(b.dataset.del){ S[b.dataset.del].splice(+b.dataset.i,1); render(true); }
   if(b.dataset.add==='tjeneste'){ S.tjeneste.push({navn:'Ny post', belop:0}); render(true); }
   if(b.dataset.add==='kost'){ S.kost.push({navn:'Ny post', type:'fast', belop:0}); render(true); }
   if(b.dataset.add==='rolle'){ S.roller.push({navn:'Ny rolle', antall:1, type:'event', timer:2}); render(true); }
+  if(b.dataset.add==='trinn'){ const t = sortertTrinn(S); const last = t.length ? t[t.length-1] : {fra:50, pst:0}; S.godt.trinn.push({fra:last.fra+100, pst:last.pst+5}); render(true); }
   if(b.dataset.preset){ applyPreset(b.dataset.preset); }
+  if(b.dataset.modell){ setModell(b.dataset.modell); render(true); }
+  if(b.dataset.info){
+    const id = b.dataset.info==='klubb' ? 'infoKlubb' : 'infoUrc';
+    const open = b.getAttribute('aria-expanded')!=='true';
+    document.querySelectorAll('.ibtn').forEach(x=>x.setAttribute('aria-expanded','false'));
+    document.querySelectorAll('.infopanel').forEach(p=>p.hidden=true);
+    if(open){ b.setAttribute('aria-expanded','true'); document.getElementById(id).hidden=false; }
+  }
   if(b.id==='tgIntern'){ const on=document.body.classList.toggle('show-intern'); b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }
 });
 function applyPreset(key){
@@ -527,14 +697,28 @@ function markCustom(k){
 /* ---------- editable tables ---------- */
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function buildTables(){
+  const urcM = S.modell==='urc';
+  document.getElementById('opsHead').innerHTML = urcM
+    ? `<tr><th>Inkludert</th><th>Post</th><th class="r">Fast pris per betalende</th></tr>`
+    : `<tr><th>Valgt</th><th>Tilvalg</th><th class="r">URC-pris per betalende</th><th class="r">Klubbens alternativ per deltaker</th></tr>`;
   document.getElementById('opsRows').innerHTML = S.opsjoner.map((o,i)=>`
-    <tr><td><input type="checkbox" style="accent-color:var(--gold)" data-list="opsjoner" data-i="${i}" data-f="valgt"${o.valgt?' checked':''} aria-label="Velg ${esc(o.navn)}"></td>
-    <td><input type="text" data-list="opsjoner" data-i="${i}" data-f="navn" value="${esc(o.navn)}" aria-label="Tilvalg"></td>
-    <td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="pris" value="${o.pris}" aria-label="URC-pris"></td>
-    <td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="alternativ" value="${o.alternativ}" aria-label="Klubbens alternativ"></td></tr>`).join('');
+    <tr><td><input type="checkbox" style="accent-color:var(--gold)" data-list="opsjoner" data-i="${i}" data-f="${urcM?'inklUrc':'valgt'}"${(urcM?inkl(o):o.valgt)?' checked':''} aria-label="Velg ${esc(o.navn)}"></td>
+    <td><input type="text" data-list="opsjoner" data-i="${i}" data-f="navn" value="${esc(o.navn)}" aria-label="Post"></td>
+    <td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="pris" value="${o.pris}" aria-label="Pris"></td>
+    ${urcM ? '' : `<td class="r"><input type="number" min="0" step="5" data-list="opsjoner" data-i="${i}" data-f="alternativ" value="${o.alternativ}" aria-label="Klubbens alternativ"></td>`}</tr>`).join('');
   const oi = document.getElementById('opsInnkjop');
   if (oi) oi.innerHTML = S.opsjoner.map((o,i)=>`
     <tr><td>${esc(o.navn)}</td><td class="r"><input type="number" min="0" step="1" data-ilist="innkjop" data-i="${i}" value="${I.innkjop[i] ?? 0}" aria-label="Innkjøp"></td></tr>`).join('');
+  // trinn: sorter på «fra» ved full ombygging
+  S.godt.trinn.sort((a,b)=>(+a.fra||0)-(+b.fra||0));
+  document.getElementById('trinnRows').innerHTML =
+    `<tr id="trinn0"><td class="muted" id="trinn0txt"></td><td class="r num muted">0 %</td><td></td></tr>` +
+    S.godt.trinn.map((t,i)=>`
+    <tr id="trinnRow${i}"><td><div style="display:flex;gap:6px;align-items:center;white-space:nowrap"><span class="muted">Fra</span>
+      <input type="number" min="0" step="1" style="width:76px" data-gl="fra" data-i="${i}" value="${t.fra}" aria-label="Fra antall deltakere">
+      <span class="muted" id="trinnTil${i}"></span></div></td>
+    <td class="r"><div style="display:flex;gap:6px;align-items:center;justify-content:flex-end"><input type="number" min="0" max="100" step="1" style="width:64px" data-gl="pst" data-i="${i}" value="${t.pst}" aria-label="Andel i prosent"><span class="muted">%</span></div></td>
+    <td><button class="x" data-del="trinn" data-i="${i}" aria-label="Fjern trinn">×</button></td></tr>`).join('');
   document.getElementById('tjRows').innerHTML = S.tjeneste.map((r,i)=>`
     <tr><td><input type="text" data-list="tjeneste" data-i="${i}" data-f="navn" value="${esc(r.navn)}" aria-label="Post"></td>
     <td class="r"><input type="number" step="500" data-list="tjeneste" data-i="${i}" data-f="belop" value="${r.belop}" aria-label="Beløp"></td>
@@ -558,17 +742,35 @@ function buildTables(){
 }
 
 /* ---------- render ---------- */
-function row(label, val, cls='', sign=''){
-  return `<tr class="${cls}"><td>${label}</td><td class="r num">${sign}${val}</td></tr>`;
+function row(label, val, cls=''){
+  return `<tr class="${cls}"><td>${label}</td><td class="r num">${val}</td></tr>`;
+}
+function kpi(i, label, val, small, cls=''){
+  document.getElementById('l'+i).textContent = label;
+  const v = document.getElementById('v'+i); v.textContent = val; v.className = 'num ' + cls;
+  document.getElementById('s'+i).textContent = small;
+}
+function trinnTekst(s){
+  const t = sortertTrinn(s);
+  const first = t.length ? t[0].fra : null;
+  document.getElementById('trinn0txt').textContent = first===null ? 'Alle' : (first>1 ? `Til og med ${first-1}` : 'Ingen');
+  t.forEach((x,k)=>{
+    const el = document.getElementById('trinnTil'+x.i); if(!el) return;
+    const next = t[k+1];
+    el.textContent = next ? `til ${next.fra-1}` : 'og over';
+  });
 }
 function render(rebuild){
   if(rebuild) buildTables();
   const c = calc(S);
+  const urcM = S.modell==='urc';
   const be = breakEven(S);
 
-  // service
+  // felles
   document.getElementById('tjSum').textContent = krk(c.tjBr);
   document.getElementById('minLisHint').textContent = 'Grunnsum ' + krk(S.minLis*S.lisensPris);
+  const g = S.godt;
+  document.getElementById('grunnHint').textContent = (+g.krPerDelt>0) ? `Gjelder til og med ${Math.floor((+g.grunnsum||0)/(+g.krPerDelt))} betalende` : '';
   S.kost.forEach((k,i)=>{ const el=document.getElementById('kost'+i); if(el) el.textContent=kr(c.kost[i]); });
   c.roller.forEach((r,i)=>{
     const t=document.getElementById('rt'+i); if(t) t.textContent = tt(r.t)+' t';
@@ -578,69 +780,116 @@ function render(rebuild){
   document.getElementById('timerSum').textContent = fmt.format(Math.round(c.timer));
   const h = Math.floor(c.varMin/60), m = Math.round(c.varMin%60);
   document.getElementById('resLede').textContent = `${c.puljer} puljer · løpstid ${h} t ${m} min · ${c.persDag} funksjonærer på løpsdagen`;
+  trinnTekst(S);
+  const curT = sortertTrinn(S).filter(t=>c.n>=t.fra).pop();
+  document.querySelectorAll('#trinnRows tr').forEach(tr=>tr.classList.remove('cur'));
+  const curRow = document.getElementById(curT ? 'trinnRow'+curT.i : 'trinn0'); if(curRow) curRow.classList.add('cur');
 
-  // KPI
-  document.getElementById('resTitle').textContent = 'Resultat for ' + (S.klubb||'klubben');
+  document.getElementById('resTitle').textContent = 'Resultat for ' + (S.klubb||'klubben') + ' · ' + MODELL_NAVN[S.modell];
   document.getElementById('ansvKlubb').textContent = S.klubb || 'Klubben';
   document.getElementById('prisBadge').textContent = presetLabel;
-  const o = document.getElementById('kOver'); o.textContent = krk(c.over); o.className = 'num ' + (c.over>=0?'pos':'neg');
-  document.getElementById('kOverS').textContent = `ved ${c.n} betalende`;
-  document.getElementById('kBe').textContent = be===null ? 'Ikke nådd' : fmt.format(be);
-  const perT = c.timer>0 ? c.over/c.timer : 0;
-  document.getElementById('kTime').textContent = krk(perT);
-  document.getElementById('kTimeS').textContent = `${fmt.format(Math.round(c.timer))} dugnadstimer`;
-  document.getElementById('kFakt').textContent = krk(c.faktura);
-  document.getElementById('kFaktS').textContent = `${pct(c.kont? c.faktura/c.kont*100 : 0)} av kontingenten` + (S.mva?' · inkl. MVA':'');
-
-  // regnskap
   document.getElementById('regnLede').textContent = `${c.n} betalende + ${S.fri} fribilletter`;
-  document.getElementById('regn').innerHTML =
-    `<tr><th>Post</th><th class="r">kr</th></tr>` +
-    row(`Startkontingent (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
-    (S.lokaleSponsorer? row('Lokale sponsorer', kr(S.lokaleSponsorer)) : '') +
-    (S.andreInnt? row('Kiosk og annet salg', kr(S.andreInnt)) : '') +
-    row('Sum inntekter', kr(c.innt), 'sum') +
-    row(`Betalingsgebyr (${tt(S.gebyrPst)} %)`, kr(-c.gebyr)) +
-    row('Arrangementskostnader', kr(-(c.kostSum-c.opsEgen))) +
-    (c.opsEgen? row('Egne innkjøp i stedet for tilvalg', kr(-c.opsEgen)) : '') +
-    row(`Uforutsett (${tt(S.uforPst)} %)`, kr(-c.ufor), 'sub') +
-    row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
-    `<tr class="total"><td>Overskudd til klubben</td><td class="r num ${c.over>=0?'pos':'neg'}">${krk(c.over)}</td></tr>`;
+  const perT = c.timer>0 ? c.club/c.timer : 0;
 
-  // faktura
-  document.getElementById('fakt').innerHTML =
-    `<tr><th>Post</th><th class="r">kr</th></tr>` +
-    row(`Lisens (${c.lisAnt} × ${kr(S.lisensPris)})${c.lisAnt>c.n?' · minimum':''}`, kr(c.lisBr)) +
-    (c.lisRab? row(`Rabatt lisens (${tt(S.rabLis)} %)`, kr(-c.lisRab), 'sub') : '') +
-    row('Tjeneste på arrangementsdagen', kr(c.tjBr)) +
-    (c.tjRab? row(`Rabatt tjeneste (${tt(S.rabTj)} %)`, kr(-c.tjRab), 'sub') : '') +
-    (c.rabKr? row('Annen rabatt', kr(-c.rabKr), 'sub') : '') +
-    c.ops.filter(o=>o.valgt).map(o=>row(`Tilvalg: ${esc(o.navn)}`, kr(o.urc))).join('') +
-    row('Sum eks. MVA', kr(c.fEks), 'sum') +
-    (S.mva? row('MVA 25 %', kr(c.mva)) : '') +
-    `<tr class="total"><td>Til betaling${S.mva?'':' eks. MVA'}</td><td class="r num">${krk(c.faktura)}</td></tr>` +
-    `<tr class="sub"><td colspan="2" style="padding-top:12px">Effektiv pris per betalende: <b class="num" style="color:var(--fg)">${krk(c.n? c.fEks/c.n : 0)}</b> eks. MVA</td></tr>`;
+  if(!urcM){
+    kpi(1, 'Klubbens overskudd', krk(c.over), `ved ${c.n} betalende`, c.over>=0?'pos':'neg');
+    kpi(2, 'Break-even', be===null ? 'Ikke nådd' : fmt.format(be), 'betalende deltakere');
+    kpi(3, 'Per dugnadstime', krk(perT), `${fmt.format(Math.round(c.timer))} dugnadstimer`);
+    kpi(4, 'Faktura fra URC', krk(c.faktura), `${pct(c.kont? c.faktura/c.kont*100 : 0)} av kontingenten` + (S.mva?' · inkl. MVA':''));
 
-  // oppgjør
-  document.getElementById('oppgj').innerHTML =
-    `<tr><th>Post</th><th class="r">kr</th></tr>` +
-    row(`Startkontingent innbetalt via URC-påmeldingen (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
-    row(`Betalingsgebyr (${tt(S.gebyrPst)} % av kontingenten)`, kr(-c.gebyr)) +
-    row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
-    `<tr class="total"><td>Utbetales til klubben</td><td class="r num">${krk(c.utbet)}</td></tr>`;
+    document.getElementById('regn').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row(`Startkontingent (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
+      (S.lokaleSponsorer? row('Lokale sponsorer', kr(S.lokaleSponsorer)) : '') +
+      (S.andreInnt? row('Kiosk og annet salg', kr(S.andreInnt)) : '') +
+      row('Sum inntekter', kr(c.innt), 'sum') +
+      row(`Betalingsgebyr (${tt(S.gebyrPst)} %)`, kr(-c.gebyr)) +
+      row('Arrangementskostnader', kr(-c.kostBase)) +
+      (c.opsEgen? row('Egne innkjøp i stedet for tilvalg', kr(-c.opsEgen)) : '') +
+      row(`Uforutsett (${tt(S.uforPst)} %)`, kr(-c.ufor), 'sub') +
+      row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
+      `<tr class="total"><td>Overskudd til klubben</td><td class="r num ${c.over>=0?'pos':'neg'}">${krk(c.over)}</td></tr>`;
+
+    document.getElementById('fakt').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row(`Lisens (${c.lisAnt} × ${kr(S.lisensPris)})${c.lisAnt>c.n?' · minimum':''}`, kr(c.lisBr)) +
+      (c.lisRab? row(`Rabatt lisens (${tt(S.rabLis)} %)`, kr(-c.lisRab), 'sub') : '') +
+      row('Tjeneste på arrangementsdagen', kr(c.tjBr)) +
+      (c.tjRab? row(`Rabatt tjeneste (${tt(S.rabTj)} %)`, kr(-c.tjRab), 'sub') : '') +
+      (c.rabKr? row('Annen rabatt', kr(-c.rabKr), 'sub') : '') +
+      c.ops.filter(o=>o.valgt).map(o=>row(`Tilvalg: ${esc(o.navn)}`, kr(o.urc))).join('') +
+      row('Sum eks. MVA', kr(c.fEks), 'sum') +
+      (S.mva? row('MVA 25 %', kr(c.mva)) : '') +
+      `<tr class="total"><td>Til betaling${S.mva?'':' eks. MVA'}</td><td class="r num">${krk(c.faktura)}</td></tr>` +
+      `<tr class="sub"><td colspan="2" style="padding-top:12px">Effektiv pris per betalende: <b class="num" style="color:var(--fg)">${krk(c.n? c.fEks/c.n : 0)}</b> eks. MVA</td></tr>`;
+
+    document.getElementById('oppgj').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row(`Startkontingent innbetalt via URC-påmeldingen (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
+      row(`Betalingsgebyr (${tt(S.gebyrPst)} % av kontingenten)`, kr(-c.gebyr)) +
+      row('Faktura fra URC AS' + (S.mva?' inkl. MVA':''), kr(-c.faktura)) +
+      `<tr class="total"><td>Utbetales til klubben</td><td class="r num">${krk(c.utbet)}</td></tr>`;
+  } else {
+    kpi(1, 'Til klubben', krk(c.klubbU), `ved ${c.n} betalende · uten risiko`, 'pos');
+    kpi(2, 'Per betalende', krk(c.n? c.utbetU/c.n : 0), 'fast sum + andel av overskudd');
+    kpi(3, 'Per dugnadstime', krk(perT), `${fmt.format(Math.round(c.timer))} dugnadstimer`);
+    kpi(4, 'Andel av overskuddet', pct(c.pstU), c.O>=0 ? `av ${krk(c.O)} i overskudd` : 'Underskudd dekkes av URC');
+
+    document.getElementById('regn').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row(`Startkontingent (${c.n} × ${kr(S.kontingent)})`, kr(c.kont)) +
+      row(`Betalingsgebyr (${tt(S.gebyrPst)} %)`, kr(-c.gebyr)) +
+      row('Arrangementskostnader', kr(-c.kostBase)) +
+      row(`Uforutsett (${tt(S.uforPst)} %)`, kr(-c.uforU), 'sub') +
+      row('URC-leveranse til faste priser', kr(-c.levU)) +
+      row(c.minimum ? 'Fast sum til klubben (minimum)' : `Fast sum til klubben (${c.n} × ${kr(+S.godt.krPerDelt||0)})`, kr(-c.fastU)) +
+      `<tr class="total"><td>Overskudd før deling</td><td class="r num ${c.O>=0?'pos':'neg'}">${krk(c.O)}</td></tr>` +
+      row(`Klubbens andel (${pct(c.pstU)})`, kr(c.andelU)) +
+      row(c.O>=0 ? `URCs andel (${pct(100-c.pstU)})` : 'Underskudd, dekkes av URC', kr(c.urcAndel), 'sub');
+
+    document.getElementById('fakt').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row('Tjeneste på arrangementsdagen', kr(c.tjBr)) +
+      (c.tjRab? row(`Rabatt tjeneste (${tt(S.rabTj)} %)`, kr(-c.tjRab), 'sub') : '') +
+      (c.rabKrU? row('Annen rabatt', kr(-c.rabKrU), 'sub') : '') +
+      row(`Startnummer med sponsorprofil (${c.n} × ${kr(+S.godt.startnrPris||0)})`, kr(c.startnrU)) +
+      c.opsU.filter(o=>o.inkl).map(o=>row(`${esc(o.navn)} (${c.n} × ${kr(o.pris/(c.n||1))})`, kr(o.pris))).join('') +
+      `<tr class="total"><td>Sum URC-leveranse</td><td class="r num">${krk(c.levU)}</td></tr>` +
+      `<tr class="sub"><td colspan="2" style="padding-top:12px">Prisene avtales før arrangementet og endres ikke i etterkant. Fribilletter belastes ikke arrangementet.</td></tr>`;
+
+    document.getElementById('oppgj').innerHTML =
+      `<tr><th>Post</th><th class="r">kr</th></tr>` +
+      row(c.minimum ? 'Fast sum (minimum)' : `Fast sum (${c.n} × ${kr(+S.godt.krPerDelt||0)})`, kr(c.fastU)) +
+      row(`Andel av overskuddet (${pct(c.pstU)})`, kr(c.andelU)) +
+      `<tr class="total"><td>Utbetales til klubben</td><td class="r num">${krk(c.utbetU)}</td></tr>` +
+      ((S.lokaleSponsorer||S.andreInnt) ? row('Lokale sponsorer, kiosk og salg', kr(S.lokaleSponsorer+S.andreInnt), 'sub') + row('Klubbens samlede inntekt', kr(c.klubbU), 'sum') : '');
+  }
 
   // intern
-  if (SHOW_INTERN) document.getElementById('urcTab').innerHTML =
-    `<tr><th>Post</th><th class="r">kr</th></tr>` +
-    row('Lisens og tjeneste, eks. MVA', kr(c.fEks)) +
-    row('Nasjonale sponsorer', kr(I.nasjSponsor)) +
-    row('Honorar inviterte profiler', kr(-I.honorar)) +
-    row('Backup-tidtaking', kr(-I.backup)) +
-    row('Reise og opphold', kr(-I.reiseFaktisk)) +
-    row('Pengepremier og uttrekkspremier', kr(-I.pengepremier)) +
-    row(`Startnummer (${c.delt} stk)`, kr(-c.startnr)) +
-    (c.opsInnkjop? row('Innkjøp av tilvalg, inkl. fribilletter', kr(-c.opsInnkjop)) : '') +
-    `<tr class="total"><td>Bidrag til URC AS</td><td class="r num ${c.urc>=0?'pos':'neg'}">${krk(c.urc)}</td></tr>`;
+  if (SHOW_INTERN) document.getElementById('urcTab').innerHTML = !urcM
+    ? `<tr><th>Post · Klubb/lag</th><th class="r">kr</th></tr>` +
+      row('Lisens, tjeneste og tilvalg, eks. MVA', kr(c.fEks)) +
+      row('Nasjonale sponsorer', kr(I.nasjSponsor)) +
+      row('Honorar inviterte profiler', kr(-I.honorar)) +
+      row('Backup-tidtaking', kr(-I.backup)) +
+      row('Reise og opphold', kr(-I.reiseFaktisk)) +
+      row('Pengepremier og uttrekkspremier', kr(-I.pengepremier)) +
+      row(`Startnummer (${c.delt} stk)`, kr(-c.startnr)) +
+      (c.opsInnkjop? row('Innkjøp av tilvalg, inkl. fribilletter', kr(-c.opsInnkjop)) : '') +
+      `<tr class="total"><td>Bidrag til URC AS</td><td class="r num ${c.urcK>=0?'pos':'neg'}">${krk(c.urcK)}</td></tr>` +
+      `<tr class="sub"><td>Til sammenligning, URC-modellen</td><td class="r num">${kr(c.urcU)}</td></tr>`
+    : `<tr><th>Post · URC</th><th class="r">kr</th></tr>` +
+      row('URCs andel av overskuddet', kr(c.urcAndel)) +
+      row('URC-leveranse til faste priser', kr(c.levU)) +
+      row('Nasjonale sponsorer', kr(I.nasjSponsor)) +
+      row('Honorar inviterte profiler', kr(-I.honorar)) +
+      row('Backup-tidtaking', kr(-I.backup)) +
+      row('Reise og opphold', kr(-I.reiseFaktisk)) +
+      row('Pengepremier og uttrekkspremier', kr(-I.pengepremier)) +
+      row(`Startnummer, innkjøp (${c.delt} stk)`, kr(-c.startnr)) +
+      row('Innkjøp medaljer og pakker, inkl. fribilletter', kr(-c.opsU.reduce((a,o)=>a+o.innkjop,0))) +
+      `<tr class="total"><td>Bidrag til URC AS</td><td class="r num ${c.urcU>=0?'pos':'neg'}">${krk(c.urcU)}</td></tr>` +
+      `<tr class="sub"><td>Til sammenligning, Klubb/lag-modellen</td><td class="r num">${kr(c.urcK)}</td></tr>`;
 
   drawChart(c, be);
   if (P0) { P0.save(S); if (P0.isAdmin) P0.saveInternal(I); }
@@ -655,13 +904,19 @@ let chartData = null;
 function drawChart(cur, be){
   const svg = document.getElementById('svg');
   const W = Math.max(320, document.getElementById('chart').clientWidth), H = Math.round(Math.min(340, Math.max(240, W*0.55)));
-  const m = {l:58, r:96, t:14, b:34};
+  const m = {l:58, r:84, t:14, b:34};
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const xMax = 600;
   const pts = [];
-  for(let n=50;n<=xMax;n+=10){ const c=calc(S,n); pts.push({n, club:c.over, urc:c.faktura}); }
+  for(let n=50;n<=xMax;n+=10){ const c=calc(S,n); pts.push({n, k:c.over, u:c.klubbU}); }
   chartData = {pts, m, W, H, xMax};
-  let yMin = Math.min(0, ...pts.map(p=>Math.min(p.club,p.urc))), yMax = Math.max(...pts.map(p=>Math.max(p.club,p.urc)));
+  // krysningspunkter (der modellene gir klubben like mye)
+  const kryss = [];
+  for(let n=51;n<=xMax;n++){ const a=calc(S,n-1), b=calc(S,n); if(Math.sign(a.over-a.klubbU)!==Math.sign(b.over-b.klubbU) && Math.sign(b.over-b.klubbU)!==0) kryss.push(n); }
+  document.getElementById('chartLede').textContent = kryss.length
+    ? (kryss.length===1 ? `Klubb/lag gir klubben mest fra ${kryss[0]} betalende` : `Modellene bytter plass ved ${kryss.slice(0,4).join(', ')} betalende`)
+    : `Øvrige tall holdes fast`;
+  let yMin = Math.min(0, ...pts.map(p=>Math.min(p.k,p.u))), yMax = Math.max(...pts.map(p=>Math.max(p.k,p.u)));
   const step = niceStep(yMax-yMin, 5);
   yMin = Math.floor(yMin/step)*step; yMax = Math.ceil(yMax/step)*step;
   const x = n => m.l + (n-50)/(xMax-50)*(W-m.l-m.r);
@@ -677,25 +932,22 @@ function drawChart(cur, be){
   }
   g += `<text x="${W-m.r}" y="${H-4}" text-anchor="end" fill="#5e7590" font-size="11">betalende deltakere</text>`;
   const path = k => pts.map((p,i)=>`${i?'L':'M'}${x(p.n).toFixed(1)},${y(p[k]).toFixed(1)}`).join('');
-  // current marker
   if(cur.n>=50 && cur.n<=xMax){
     g += `<line x1="${x(cur.n)}" x2="${x(cur.n)}" y1="${m.t}" y2="${H-m.b}" stroke="#29496f" stroke-dasharray="3 4"/>`;
     g += `<text x="${x(cur.n)+5}" y="${m.t+11}" fill="#8fa3b8" font-size="11">Valgt: ${cur.n}</text>`;
   }
-  g += `<path d="${path('urc')}" fill="none" stroke="var(--s-urc)" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/>`;
-  g += `<path d="${path('club')}" fill="none" stroke="var(--s-club)" stroke-width="2" stroke-linejoin="round"/>`;
-  // break-even
+  const urcM = S.modell==='urc';
+  g += `<path d="${path('u')}" fill="none" stroke="var(--s-urc)" stroke-width="${urcM?2.5:1.75}" stroke-dasharray="6 4" stroke-linejoin="round" opacity="${urcM?1:.75}"/>`;
+  g += `<path d="${path('k')}" fill="none" stroke="var(--s-club)" stroke-width="${urcM?1.75:2.5}" stroke-linejoin="round" opacity="${urcM?.75:1}"/>`;
   if(be!==null && be>=50 && be<=xMax){
     g += `<circle cx="${x(be)}" cy="${y(0)}" r="5" fill="var(--s-club)" stroke="#0f2035" stroke-width="2"/>`;
-    g += `<text x="${x(be)+8}" y="${y(0)+16}" fill="#e8f0e8" font-size="11">Break-even ${be}</text>`;
+    g += `<text x="${x(be)+8}" y="${y(0)+16}" fill="#e8f0e8" font-size="11">Break-even Klubb/lag: ${be}</text>`;
   }
-  // direct end labels
   const last = pts[pts.length-1];
-  let yc = y(last.club), yu = y(last.urc);
-  if(Math.abs(yc-yu)<14){ if(yc<yu){ yc-=7; yu+=7;} else { yc+=7; yu-=7; } }
-  g += `<text x="${W-m.r+8}" y="${yc+4}" fill="#e8f0e8" font-size="11.5">Klubben</text>`;
-  g += `<text x="${W-m.r+8}" y="${yu+4}" fill="#e8f0e8" font-size="11.5">URC-faktura</text>`;
-  // hover layer
+  let yk = y(last.k), yu = y(last.u);
+  if(Math.abs(yk-yu)<14){ if(yk<yu){ yk-=7; yu+=7;} else { yk+=7; yu-=7; } }
+  g += `<text x="${W-m.r+8}" y="${yk+4}" fill="#e8f0e8" font-size="11.5" font-weight="${urcM?400:700}">Klubb/lag</text>`;
+  g += `<text x="${W-m.r+8}" y="${yu+4}" fill="#e8f0e8" font-size="11.5" font-weight="${urcM?700:400}">URC</text>`;
   g += `<line id="cross" x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" stroke="#8fa3b8" stroke-width="1" opacity="0"/>`;
   g += `<circle id="dotC" r="4.5" fill="var(--s-club)" stroke="#0f2035" stroke-width="2" opacity="0"/>`;
   g += `<circle id="dotU" r="4.5" fill="var(--s-urc)" stroke="#0f2035" stroke-width="2" opacity="0"/>`;
@@ -711,9 +963,8 @@ function drawChart(cur, be){
     chartData.ki = Math.max(0, Math.min(pts.length-1, (chartData.ki ?? pts.findIndex(p=>p.n>=cur.n)) + (e.key==='ArrowRight'?1:-1)));
     showAt(chartData.ki);
   });
-  // sensitivity table
-  const rows = [100,150,200,250,300,350,400,450,500,550,600].map(n=>{ const c=calc(S,n); return `<tr><td class="num">${n}</td><td class="r num ${c.over>=0?'':'neg'}">${kr(c.over)}</td><td class="r num">${kr(c.faktura)}</td><td class="r num">${c.timer? kr(c.over/c.timer):'0'}</td></tr>`; }).join('');
-  document.getElementById('sensTab').innerHTML = `<tr><th>Betalende</th><th class="r">Klubbens overskudd</th><th class="r">URC-faktura</th><th class="r">Per dugnadstime</th></tr>` + rows;
+  const rows = [100,150,200,250,300,350,400,450,500,550,600].map(n=>{ const c=calc(S,n); return `<tr><td class="num">${n}</td><td class="r num ${c.over>=0?'':'neg'}">${kr(c.over)}</td><td class="r num">${kr(c.klubbU)}</td><td class="r num">${c.timer? kr(c.club/c.timer):'0'}</td></tr>`; }).join('');
+  document.getElementById('sensTab').innerHTML = `<tr><th>Betalende</th><th class="r">Klubb/lag</th><th class="r">URC</th><th class="r">Per dugnadstime (${MODELL_NAVN[S.modell]})</th></tr>` + rows;
 }
 function onHover(e){
   const svg = document.getElementById('svg');
@@ -728,12 +979,12 @@ function showAt(i){
   const svg = document.getElementById('svg');
   const cx = x(p.n);
   const cr = svg.getElementById('cross'); cr.setAttribute('x1',cx); cr.setAttribute('x2',cx); cr.setAttribute('opacity',.6);
-  const dc = svg.getElementById('dotC'); dc.setAttribute('cx',cx); dc.setAttribute('cy',y(p.club)); dc.setAttribute('opacity',1);
-  const du = svg.getElementById('dotU'); du.setAttribute('cx',cx); du.setAttribute('cy',y(p.urc)); du.setAttribute('opacity',1);
+  const dc = svg.getElementById('dotC'); dc.setAttribute('cx',cx); dc.setAttribute('cy',y(p.k)); dc.setAttribute('opacity',1);
+  const du = svg.getElementById('dotU'); du.setAttribute('cx',cx); du.setAttribute('cy',y(p.u)); du.setAttribute('opacity',1);
   const tip = document.getElementById('tip');
   tip.innerHTML = '';
-  const hd = document.createElement('div'); hd.className='h'; hd.textContent = p.n + ' betalende'; tip.appendChild(hd);
-  [['Klubbens overskudd', p.club, 'var(--s-club)'], ['Faktura fra URC', p.urc, 'var(--s-urc)']].forEach(([l,v,c])=>{
+  const hd = document.createElement('div'); hd.className='h'; hd.textContent = p.n + ' betalende · til klubben'; tip.appendChild(hd);
+  [['Klubb/lag', p.k, 'var(--s-club)'], ['URC', p.u, 'var(--s-urc)']].forEach(([l,v,c])=>{
     const d=document.createElement('div'); d.className='row';
     const s=document.createElement('span'); const ic=document.createElement('i'); ic.style.setProperty('--c',c); s.appendChild(ic); s.appendChild(document.createTextNode(l));
     const b=document.createElement('b'); b.textContent = krk(v);
@@ -750,6 +1001,7 @@ function hideTip(){
 }
 let rz; new ResizeObserver(()=>{ clearTimeout(rz); rz=setTimeout(()=>{ const c=calc(S); drawChart(c, breakEven(S)); },60); }).observe(document.getElementById('chart'));
 
+setModell(S.modell);
 bindInputs();
 { const pk = Object.keys(PRESETS).find(k => PRESETS[k].label === presetLabel); if (pk) document.querySelector('[data-preset='+pk+']').classList.add('on'); }
 render(true);
