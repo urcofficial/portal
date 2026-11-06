@@ -1,6 +1,6 @@
 # URC Arrangementsportal
 
-portal.urcofficial.com: Felles planleggingsverktøy for URC, arrangørklubber og partnere.
+portal.urcsports.no: Felles planleggingsverktøy for URC, arrangørklubber og partnere.
 
 ## Struktur
 
@@ -44,7 +44,7 @@ Admin-e-poster ligger i tabellen `portal_admins`. URC-interne tall ligger i `cal
 4. **RLS skal være på.** Ikke kjør `disable row level security` på noen tabell i dette prosjektet.
 
 ### 2. Innlogging (Authentication)
-1. **URL Configuration:** Site URL `https://portal.urcofficial.com`. Redirect URLs `https://portal.urcofficial.com/**`.
+1. **URL Configuration:** Site URL `https://portal.urcsports.no`. Redirect URLs `https://portal.urcsports.no/**`.
 2. **SMTP (påkrevd):** Supabase sin innebygde e-post sender kun til medlemmer av Supabase-teamet. Sett opp egen SMTP under Authentication → Emails → SMTP Settings. Enklest: Gmail med app-passord for urcsportsno@gmail.com (`smtp.gmail.com`, port 465). Avsendernavn: URC Arrangementsportal.
 3. **E-postmaler:** Sett både «Magic Link» og «Confirm signup» til:
    - Emne: `Innloggingslenke til URC Arrangementsportal`
@@ -62,7 +62,7 @@ Fyll inn `SUPABASE_URL` og `SUPABASE_ANON_KEY` øverst i `assets/portal.js` (Pro
 ### 4. GitHub og Vercel
 1. Nytt repo `urcofficial/portal`, last opp innholdet i denne mappen.
 2. Nytt Vercel-prosjekt fra repoet (team `urcsports`), ingen byggesteg.
-3. Legg til domenet `portal.urcofficial.com` i Vercel, og legg CNAME-målet Vercel genererer inn i Domene.no.
+3. Legg til domenet `portal.urcsports.no` i Vercel, og legg CNAME-målet Vercel genererer inn i Domene.no.
 
 ### 5. Hold Supabase våken
 Gratisprosjekter pauses etter en uke uten trafikk. `.github/workflows/keepalive.yml` pinger databasen to ganger i uka. Legg inn repo-secrets `SUPABASE_URL` og `SUPABASE_ANON_KEY`. Alternativ: Supabase Pro.

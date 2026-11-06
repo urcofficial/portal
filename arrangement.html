@@ -186,7 +186,7 @@ a.t:hover{border-color:var(--sage);transform:translateY(-2px)}
       // ---- Tilgang ----
       const mMsg = $('#mMsg');
       const flash = (t, ok) => { mMsg.className = 'flash ' + (ok ? 'ok' : 'err'); mMsg.innerHTML = t; mMsg.hidden = false; };
-      const loginUrl = (P.DEMO ? 'https://portal.urcofficial.com' : location.origin) + '/logg-inn';
+      const loginUrl = (P.DEMO ? 'https://portal.urcsports.no' : location.origin) + '/logg-inn';
       async function renderMembers() {
         const ms = await P.api.members(ev.id);
         $('#members').innerHTML = `<tr><th>Navn</th><th>Organisasjon</th><th>E-post</th><th>Rolle</th><th></th></tr>` + (ms.length ? ms.map(m => `
