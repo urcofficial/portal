@@ -97,7 +97,7 @@
 
   const api = {
     async user() {
-      if (DEMO) return { email: 'demo@urcofficial.com' };
+      if (DEMO) return { email: 'demo@urcsports.no' };
       if (!sb) return null;
       const { data } = await sb.auth.getSession();
       return data.session ? data.session.user : null;
@@ -152,7 +152,7 @@
       return must(await sb.from('tool_state').select('state,locked,updated_at,updated_by').eq('event_id', evId).eq('tool', tool).maybeSingle());
     },
     async saveTool(evId, tool, state) {
-      if (DEMO) { const r = demo.tool(evId, tool) || {}; demo.setTool(evId, tool, { ...r, state, updated_at: new Date().toISOString(), updated_by: 'demo@urcofficial.com' }); return; }
+      if (DEMO) { const r = demo.tool(evId, tool) || {}; demo.setTool(evId, tool, { ...r, state, updated_at: new Date().toISOString(), updated_by: 'demo@urcsports.no' }); return; }
       must(await sb.from('tool_state').upsert({ event_id: evId, tool, state }, { onConflict: 'event_id,tool' }));
     },
     async setLock(evId, tool, locked) {
